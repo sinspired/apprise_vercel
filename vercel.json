@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/notify",
+      "destination": "/api/notify"
+    }
+  ]
+}
