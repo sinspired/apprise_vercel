@@ -1,10 +1,6 @@
 from http.server import BaseHTTPRequestHandler
 import json
 import apprise
-import asyncio
-
-# 全局缓存对象，避免重复初始化
-apobj = apprise.Apprise()
 
 class handler(BaseHTTPRequestHandler):
 
@@ -40,23 +36,18 @@ class handler(BaseHTTPRequestHandler):
             self._send_response(400, {"error": "Missing 'urls' field"})
             return
 
-        # 添加通知服务
+        apobj = apprise.Apprise()
+
         for url in urls.split(","):
             apobj.add(url.strip())
 
-        async def send():
-            return await apobj.async_notify(
+        try:
+            success = apobj.notify(
                 body=form.get("body", ""),
                 title=form.get("title", ""),
                 notify_type=form.get("type", "info"),
                 body_format=form.get("format", "text"),
             )
-
-        try:
-            loop = asyncio.new_event_loop()
-            asyncio.set_event_loop(loop)
-            success = loop.run_until_complete(send())
-            loop.close()
         except Exception as e:
             self._send_response(500, {"error": f"Notification failed: {str(e)}"})
             return
