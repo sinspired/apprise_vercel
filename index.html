@@ -1,59 +1,554 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <title>Apprise Vercel Notify</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap/dist/css/bootstrap.min.css">
+  <title>Apprise Notify Console</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    :root {
+      --bg: #f5f5f7;
+      --card-bg: #ffffff;
+      --text-main: #1d1d1f;
+      --text-sub: #86868b;
+      --border: #d2d2d7;
+      --focus-ring: #0071e3;
+      --danger: #ff3b30;
+      --tag-bg: #e8e8ed;
+      --radius: 10px;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #000000;
+        --card-bg: #1c1c1e;
+        --text-main: #f5f5f7;
+        --text-sub: #86868b;
+        --border: #424245;
+        --tag-bg: #3a3a3c;
+        --focus-ring: #2997ff;
+      }
+    }
+
+    * { box-sizing: border-box; outline: none; }
+
+    body {
+      font-family: var(--font-sans);
+      margin: 0;
+      padding: 0;
+      background: var(--bg);
+      color: var(--text-main);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden; /* PC端禁止body滚动，由内部容器滚动 */
+    }
+
+    /* 顶部导航 */
+    header {
+      background: var(--card-bg);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-shrink: 0;
+      z-index: 10;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 1.2rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* 主布局 Grid */
+    .main-layout {
+      display: grid;
+      grid-template-columns: minmax(400px, 2fr) 1fr;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    /* 左侧面板：Flex Column 布局 */
+    .panel-left {
+      padding: 24px;
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      overflow-y: auto; /* 如果屏幕特别矮，允许整体滚动 */
+    }
+
+    /* 右侧面板 */
+    .panel-right {
+      background: var(--card-bg);
+      display: flex;
+      flex-direction: column;
+      border-left: 1px solid var(--border);
+      height: 100%;
+    }
+
+    /* 通用表单组 */
+    .form-group {
+      margin-bottom: 18px;
+      flex-shrink: 0; /* 防止固定高度的元素被压缩 */
+    }
+    
+    label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-sub);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* URLs 容器：内容增多时伸缩，但有上限 */
+    #urlContainer {
+      max-height: 25vh; /* 限制最大高度，防止占满全屏 */
+      overflow-y: auto;
+    }
+
+    /* 这里的样式与之前相同，略微调整滚动条 */
+    .chip-container {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 6px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      min-height: 42px;
+      cursor: text;
+      transition: box-shadow 0.2s, border-color 0.2s;
+    }
+    .chip-container:focus-within {
+      border-color: var(--focus-ring);
+      box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.2);
+    }
+    
+    /* 关键改动：Body 区域填满剩余空间 */
+    .form-group-fill {
+      flex: 1; /* 占据剩余空间 */
+      display: flex;
+      flex-direction: column;
+      min-height: 150px; /* 防止缩得太小 */
+      margin-bottom: 18px;
+    }
+
+    textarea.input-std-fill {
+      flex: 1; /* 填满父容器 */
+      resize: none; /* 禁止手动调整，完全由 Flex 控制 */
+      width: 100%;
+      padding: 12px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text-main);
+      font-size: 0.95rem;
+      line-height: 1.5;
+      font-family: monospace;
+    }
+    textarea.input-std-fill:focus {
+      border-color: var(--focus-ring);
+      box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.2);
+    }
+
+    /* 移动端适配 */
+    @media (max-width: 900px) {
+      .main-layout { grid-template-columns: 1fr; overflow-y: auto; display: block; }
+      body { height: auto; overflow: auto; }
+      .panel-left { height: auto; display: block; padding-bottom: 40px;}
+      .panel-right { height: auto; border-left: none; border-top: 1px solid var(--border); }
+      .form-group-fill { flex: none; height: auto; }
+      textarea.input-std-fill { height: 200px; resize: vertical; } /* 移动端恢复固定高度和手动调整 */
+      #urlContainer { max-height: none; }
+    }
+
+    /* 其他组件样式保持不变 */
+    .chip {
+      background: var(--tag-bg);
+      border-radius: 6px;
+      padding: 4px 8px;
+      font-size: 0.85rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      max-width: 100%;
+      word-break: break-all;
+    }
+    .chip svg { width: 14px; height: 14px; opacity: 0.7; }
+    .chip-close { cursor: pointer; opacity: 0.5; margin-left: 2px; }
+    .chip-close:hover { opacity: 1; color: var(--danger); }
+    .chip-input { border: none; background: transparent; flex-grow: 1; min-width: 150px; padding: 4px; font-size: 0.95rem; color: var(--text-main); }
+    
+    .input-std {
+      width: 100%; padding: 10px 12px; background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text-main); font-size: 0.95rem;
+    }
+    .input-std:focus { border-color: var(--focus-ring); box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.2); }
+
+    .grid-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; }
+
+    .btn-primary {
+      background: var(--focus-ring); color: white; border: none; padding: 14px 24px; border-radius: var(--radius); font-size: 1rem; font-weight: 500; cursor: pointer; width: 100%; display: flex; justify-content: center; align-items: center; gap: 8px; flex-shrink: 0;
+    }
+    .btn-primary:hover { background: #0077ED; }
+    .btn-icon { background: transparent; border: none; color: var(--focus-ring); cursor: pointer; font-size: 0.85rem; }
+
+    .panel-header { padding: 16px 20px; border-bottom: 1px solid var(--border); font-weight: 600; font-size: 0.9rem; color: var(--text-sub); display: flex; justify-content: space-between; align-items: center; }
+    .scroll-area { flex: 1; overflow-y: auto; }
+    .history-item { padding: 15px 20px; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.2s; }
+    .history-item:hover { background: var(--bg); }
+    .h-top { display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-sub); margin-bottom: 4px; }
+    .h-title { font-weight: 600; font-size: 0.9rem; color: var(--text-main); margin-bottom: 2px;}
+    .h-preview { font-size: 0.8rem; color: var(--text-sub); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    #resultArea { padding: 15px 20px; background: var(--bg); font-family: monospace; font-size: 0.8rem; white-space: pre-wrap; word-break: break-all; border-bottom: 1px solid var(--border); max-height: 200px; overflow-y: auto; flex-shrink: 0; }
+    .spinner { width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.8s linear infinite; display: none; }
+    .loading .spinner { display: block; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
 </head>
-<body class="container mt-5">
-  <h1 class="mb-4">📢 Apprise Vercel Notify</h1>
-  <p class="lead">一个基于 <a href="https://github.com/caronc/apprise">Apprise</a> 的通知 API，部署在 Vercel。</p>
+<body>
 
-  <h2>使用方法</h2>
-  <ul>
-    <li><strong>GET</strong> <code>/notify</code> → 返回 API 状态</li>
-    <li><strong>POST</strong> <code>/notify</code> → 发送 JSON 通知</li>
-  </ul>
+  <header>
+    <h1>📢 Apprise Notify</h1>
+    <button class="btn-icon" onclick="app.copyCurl()">📄 Copy CURL</button>
+  </header>
 
-  <h2>示例请求</h2>
-  <pre><code>curl -X POST https://your-domain/notify \
-  -H "Content-Type: application/json" \
-  -d '{
-    "urls": "discord://token/channel,mailto://user:pass@example.com",
-    "body": "Hello from Vercel Apprise!",
-    "title": "Test Notification",
-    "type": "info",
-    "format": "text"
-  }'
-</code></pre>
+  <div class="main-layout">
+    <!-- 左侧：编辑区 -->
+    <div class="panel-left">
+      
+      <!-- URLs Chip Input (高度自动伸缩，有上限) -->
+      <div class="form-group">
+        <label>通知地址 URLs (按回车或逗号添加)</label>
+        <div class="chip-container" id="urlContainer" onclick="document.getElementById('urlInput').focus()">
+          <input type="text" class="chip-input" id="urlInput" placeholder="tgram://..., mailto://..." autocomplete="off">
+        </div>
+      </div>
 
-  <h2>交互式测试</h2>
-  <form id="notifyForm" class="mt-3">
-    <div class="mb-3">
-      <label class="form-label">URLs</label>
-      <input type="text" class="form-control" id="urls" placeholder="discord://token/channel">
+      <!-- 这一行固定高度 -->
+      <div class="grid-row form-group">
+        <div>
+          <label>类型 Type</label>
+          <select id="type" class="input-std">
+            <option value="info">Info ℹ️</option>
+            <option value="success">Success ✅</option>
+            <option value="warning">Warning ⚠️</option>
+            <option value="error">Error ❌</option>
+          </select>
+        </div>
+        <div>
+          <label>格式 Format</label>
+          <select id="format" class="input-std">
+            <option value="text">Text</option>
+            <option value="markdown">Markdown</option>
+            <option value="html">HTML</option>
+          </select>
+        </div>
+        <!-- Tags -->
+        <div style="display: flex; flex-direction: column;">
+          <label>标签 Tags</label>
+          <div class="chip-container" id="tagContainer" style="flex: 1;" onclick="document.getElementById('tagInput').focus()">
+            <input type="text" class="chip-input" id="tagInput" placeholder="dev">
+          </div>
+        </div>
+      </div>
+
+      <!-- 标题固定高度 -->
+      <div class="form-group">
+        <label>标题 Title</label>
+        <input id="title" class="input-std" placeholder="Apprise Notification">
+      </div>
+
+      <!-- 内容区域：自动填充剩余空间 -->
+      <div class="form-group-fill">
+        <label>内容 Body</label>
+        <textarea id="body" class="input-std-fill" placeholder="Test notification from Apprise Console"></textarea>
+      </div>
+
+      <!-- 按钮固定在底部 -->
+      <button id="sendBtn" class="btn-primary" onclick="app.send()">
+        <span class="spinner"></span>
+        <span>发送通知 (Send Notification)</span>
+      </button>
+
     </div>
-    <div class="mb-3">
-      <label class="form-label">Body</label>
-      <input type="text" class="form-control" id="body" placeholder="Hello from Apprise!">
-    </div>
-    <button type="button" class="btn btn-primary" onclick="sendNotify()">Send</button>
-  </form>
 
-  <div id="result" class="mt-3"></div>
+    <!-- 右侧：历史与结果 -->
+    <div class="panel-right">
+      <div class="panel-header">
+        <span>响应结果 Response</span>
+      </div>
+      <div id="resultArea">Waiting...</div>
+
+      <div class="panel-header" style="border-top: 1px solid var(--border); margin-top: 0;">
+        <span>历史记录 History</span>
+        <button class="btn-icon" onclick="app.clearHistory()" style="color: var(--danger); font-size: 0.75rem;">清空</button>
+      </div>
+      
+      <div class="scroll-area">
+        <div id="historyList"></div>
+      </div>
+    </div>
+  </div>
 
   <script>
-    async function sendNotify() {
-      const urls = document.getElementById("urls").value;
-      const body = document.getElementById("body").value;
-      const res = await fetch("/notify", {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({urls, body})
-      });
-      const data = await res.json();
-      document.getElementById("result").innerText = JSON.stringify(data, null, 2);
+    // 图标和逻辑部分保持不变
+    const Icons = {
+      telegram: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.48-1.02-2.42-1.63-1.09-.72-.38-1.11.24-1.74.14-.15 2.57-2.35 2.62-2.54.01-.02.01-.05 0-.07-.01-.02-.04-.03-.06-.03-.02 0-.2.12-.56.36L8.4 12.4c-.4.27-.78.41-1.15.4-.41-.01-1.2-.23-1.79-.42-.72-.24-.96-.37-.92-.78.02-.21.32-.43.89-.66 3.5-1.52 5.83-2.53 6.99-3.01 3.33-1.39 4.02-1.66 4.47-1.66.1 0 .32.02.47.14.12.1.16.23.17.33 0 .1 0 .23-.01.36z"/></svg>',
+      mail: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>',
+      discord: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.118.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/></svg>',
+      link: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>',
+      tag: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>'
+    };
+
+    class ChipInput {
+      constructor(containerId, inputId, storageKey, isUrl = false) {
+        this.container = document.getElementById(containerId);
+        this.input = document.getElementById(inputId);
+        this.items = [];
+        this.storageKey = storageKey;
+        this.isUrl = isUrl;
+        this.init();
+      }
+
+      init() {
+        this.input.addEventListener('keydown', (e) => this.handleKey(e));
+        this.input.addEventListener('paste', (e) => this.handlePaste(e));
+        this.input.addEventListener('blur', () => this.addItemFromInput());
+
+        const saved = localStorage.getItem(this.storageKey);
+        if(saved) {
+          try {
+            this.items = JSON.parse(saved);
+          } catch {
+            this.items = saved.split(',').filter(s => s);
+          }
+        }
+        this.render();
+      }
+
+      handleKey(e) {
+        if (e.key === 'Enter' || e.key === ',') {
+          e.preventDefault();
+          this.addItemFromInput();
+        } else if (e.key === 'Backspace' && this.input.value === '' && this.items.length > 0) {
+          this.items.pop();
+          this.saveAndRender();
+        }
+      }
+
+      handlePaste(e) {
+        e.preventDefault();
+        const text = (e.clipboardData || window.clipboardData).getData('text');
+        const parts = text.split(/,|\n/);
+        parts.forEach(p => this.addItem(p));
+      }
+
+      addItemFromInput() {
+        const val = this.input.value.trim();
+        if (val) {
+          this.addItem(val);
+          this.input.value = '';
+        }
+      }
+
+      addItem(text) {
+        text = text.trim().replace(/^['"]|['"]$/g, ''); 
+        if (text && !this.items.includes(text)) {
+          this.items.push(text);
+          this.saveAndRender();
+        }
+      }
+
+      deleteItem(index) {
+        this.items.splice(index, 1);
+        this.saveAndRender();
+      }
+
+      saveAndRender() {
+        localStorage.setItem(this.storageKey, JSON.stringify(this.items));
+        this.render();
+      }
+
+      getIcon(text) {
+        if (!this.isUrl) return Icons.tag;
+        const lower = text.toLowerCase();
+        if (lower.startsWith('tgram')) return Icons.telegram;
+        if (lower.startsWith('discord')) return Icons.discord;
+        if (lower.startsWith('mail')) return Icons.mail;
+        return Icons.link;
+      }
+
+      render() {
+        const chips = this.container.querySelectorAll('.chip');
+        chips.forEach(c => c.remove());
+
+        this.items.forEach((text, index) => {
+          const chip = document.createElement('div');
+          chip.className = 'chip';
+          chip.innerHTML = `
+            ${this.getIcon(text)}
+            <span>${text}</span>
+            <span class="chip-close" data-idx="${index}">×</span>
+          `;
+          this.container.insertBefore(chip, this.input);
+        });
+
+        this.container.querySelectorAll('.chip-close').forEach(btn => {
+          btn.onclick = (e) => {
+            e.stopPropagation();
+            this.deleteItem(parseInt(e.target.dataset.idx));
+          };
+        });
+      }
+
+      getValue() {
+        return this.items.join(','); 
+      }
+      
+      setValue(arr) {
+        this.items = arr;
+        this.saveAndRender();
+      }
     }
+
+    const app = {
+      urlInput: null,
+      tagInput: null,
+
+      init() {
+        this.urlInput = new ChipInput('urlContainer', 'urlInput', 'apprise_urls', true);
+        this.tagInput = new ChipInput('tagContainer', 'tagInput', 'apprise_tags', false);
+
+        ['type', 'format', 'title', 'body'].forEach(id => {
+          const el = document.getElementById(id);
+          const val = localStorage.getItem('apprise_' + id);
+          if (val) el.value = val;
+          el.addEventListener('input', () => localStorage.setItem('apprise_' + id, el.value));
+        });
+
+        this.renderHistory();
+      },
+
+      async send() {
+        const rawTitle = document.getElementById('title').value;
+        const rawBody = document.getElementById('body').value;
+
+        const payload = {
+          urls: this.urlInput.getValue(),
+          tags: this.tagInput.getValue(),
+          type: document.getElementById('type').value,
+          format: document.getElementById('format').value,
+          title: rawTitle.trim() || "Apprise Notification",
+          body: rawBody.trim() || "Test notification from Apprise Console"
+        };
+
+        if (!payload.urls) {
+          alert('请至少添加一个 URL');
+          return;
+        }
+
+        const btn = document.getElementById('sendBtn');
+        const resArea = document.getElementById('resultArea');
+        
+        btn.classList.add('loading');
+        btn.disabled = true;
+        resArea.innerText = 'Sending...';
+
+        try {
+          const res = await fetch('/notify', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(payload)
+          });
+          const data = await res.json();
+          
+          resArea.innerText = JSON.stringify(data, null, 2);
+          if (res.ok) {
+            this.addToHistory(payload);
+          }
+        } catch (e) {
+          resArea.innerText = 'Error: ' + e.message;
+        } finally {
+          btn.classList.remove('loading');
+          btn.disabled = false;
+        }
+      },
+
+      addToHistory(payload) {
+        const history = JSON.parse(localStorage.getItem('apprise_history') || '[]');
+        payload._time = new Date().toLocaleTimeString();
+        history.unshift(payload);
+        if (history.length > 30) history.pop();
+        localStorage.setItem('apprise_history', JSON.stringify(history));
+        this.renderHistory();
+      },
+
+      renderHistory() {
+        const list = document.getElementById('historyList');
+        const history = JSON.parse(localStorage.getItem('apprise_history') || '[]');
+        
+        list.innerHTML = history.map((item, idx) => `
+          <div class="history-item" onclick="app.restore(${idx})">
+            <div class="h-top">
+              <span>${item._time}</span>
+              <span>${item.type}</span>
+            </div>
+            <div class="h-title">${item.title}</div>
+            <div class="h-preview">${item.body}</div>
+          </div>
+        `).join('');
+      },
+
+      restore(index) {
+        const history = JSON.parse(localStorage.getItem('apprise_history') || '[]');
+        const item = history[index];
+        if (!item) return;
+
+        this.urlInput.setValue(item.urls ? item.urls.split(',') : []);
+        this.tagInput.setValue(item.tags ? item.tags.split(',') : []);
+        document.getElementById('type').value = item.type;
+        document.getElementById('format').value = item.format;
+        document.getElementById('title').value = item.title;
+        document.getElementById('body').value = item.body;
+
+        ['type', 'format', 'title', 'body'].forEach(id => {
+          localStorage.setItem('apprise_' + id, document.getElementById(id).value);
+        });
+      },
+
+      clearHistory() {
+        if(confirm('Clear history?')) {
+          localStorage.removeItem('apprise_history');
+          this.renderHistory();
+        }
+      },
+
+      copyCurl() {
+        const rawTitle = document.getElementById('title').value;
+        const rawBody = document.getElementById('body').value;
+        
+        const payload = {
+          urls: this.urlInput.getValue(),
+          tags: this.tagInput.getValue(),
+          title: rawTitle.trim() || "Apprise Notification",
+          body: rawBody.trim() || "Test notification from Apprise Console"
+        };
+        const cmd = `curl -X POST "${location.origin}/notify" -H "Content-Type: application/json" -d '${JSON.stringify(payload)}'`;
+        navigator.clipboard.writeText(cmd);
+        alert('CURL copied to clipboard');
+      }
+    };
+
+    document.addEventListener('DOMContentLoaded', () => app.init());
+
   </script>
 </body>
 </html>
