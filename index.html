@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <title>Apprise Notify Console</title>
+  <title>Apprise 通知服务</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
     :root {
@@ -16,6 +16,7 @@
       --tag-bg: #e8e8ed;
       --radius: 10px;
       --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      --code-bg: #f0f0f0; /* 新增: 代码块背景 */
     }
 
     @media (prefers-color-scheme: dark) {
@@ -27,6 +28,7 @@
         --border: #424245;
         --tag-bg: #3a3a3c;
         --focus-ring: #2997ff;
+        --code-bg: #2c2c2e;
       }
     }
 
@@ -41,10 +43,9 @@
       height: 100vh;
       display: flex;
       flex-direction: column;
-      overflow: hidden; /* PC端禁止body滚动，由内部容器滚动 */
+      overflow: hidden;
     }
 
-    /* 顶部导航 */
     header {
       background: var(--card-bg);
       border-bottom: 1px solid var(--border);
@@ -65,7 +66,6 @@
       gap: 10px;
     }
 
-    /* 主布局 Grid */
     .main-layout {
       display: grid;
       grid-template-columns: minmax(400px, 2fr) 1fr;
@@ -73,17 +73,15 @@
       overflow: hidden;
     }
 
-    /* 左侧面板：Flex Column 布局 */
     .panel-left {
       padding: 24px;
       border-right: 1px solid var(--border);
       display: flex;
       flex-direction: column;
       height: 100%;
-      overflow-y: auto; /* 如果屏幕特别矮，允许整体滚动 */
+      overflow-y: auto;
     }
 
-    /* 右侧面板 */
     .panel-right {
       background: var(--card-bg);
       display: flex;
@@ -92,10 +90,9 @@
       height: 100%;
     }
 
-    /* 通用表单组 */
     .form-group {
       margin-bottom: 18px;
-      flex-shrink: 0; /* 防止固定高度的元素被压缩 */
+      flex-shrink: 0;
     }
     
     label {
@@ -108,13 +105,61 @@
       letter-spacing: 0.05em;
     }
 
-    /* URLs 容器：内容增多时伸缩，但有上限 */
+    /* === 新增：API 地址样式 === */
+    .api-display-box {
+      display: flex;
+      align-items: center;
+      background: var(--code-bg);
+      border: 1px dashed var(--focus-ring); /* 虚线边框，表示这是信息而非输入 */
+      padding: 10px 14px;
+      border-radius: var(--radius);
+      margin-bottom: 24px;
+      cursor: pointer;
+      transition: background 0.2s;
+      position: relative;
+    }
+    
+    .api-display-box:hover {
+      background: var(--tag-bg); /* Hover 变色提示可交互 */
+    }
+
+    .api-label-badge {
+      font-size: 0.7rem;
+      font-weight: 700;
+      background: var(--focus-ring);
+      color: white;
+      padding: 2px 6px;
+      border-radius: 4px;
+      margin-right: 10px;
+      flex-shrink: 0;
+    }
+
+    #apiUrlText {
+      font-family: monospace;
+      font-size: 0.9rem;
+      color: var(--text-main);
+      word-break: break-all;
+      flex-grow: 1;
+    }
+
+    .copy-hint {
+      font-size: 0.75rem;
+      color: var(--focus-ring);
+      opacity: 0;
+      transition: opacity 0.2s;
+      white-space: nowrap;
+    }
+    
+    .api-display-box:hover .copy-hint {
+      opacity: 1;
+    }
+    /* ========================== */
+
     #urlContainer {
-      max-height: 25vh; /* 限制最大高度，防止占满全屏 */
+      max-height: 25vh;
       overflow-y: auto;
     }
 
-    /* 这里的样式与之前相同，略微调整滚动条 */
     .chip-container {
       background: var(--card-bg);
       border: 1px solid var(--border);
@@ -132,18 +177,17 @@
       box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.2);
     }
     
-    /* 关键改动：Body 区域填满剩余空间 */
     .form-group-fill {
-      flex: 1; /* 占据剩余空间 */
+      flex: 1;
       display: flex;
       flex-direction: column;
-      min-height: 150px; /* 防止缩得太小 */
+      min-height: 150px;
       margin-bottom: 18px;
     }
 
     textarea.input-std-fill {
-      flex: 1; /* 填满父容器 */
-      resize: none; /* 禁止手动调整，完全由 Flex 控制 */
+      flex: 1;
+      resize: none;
       width: 100%;
       padding: 12px;
       background: var(--card-bg);
@@ -159,18 +203,16 @@
       box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.2);
     }
 
-    /* 移动端适配 */
     @media (max-width: 900px) {
       .main-layout { grid-template-columns: 1fr; overflow-y: auto; display: block; }
       body { height: auto; overflow: auto; }
       .panel-left { height: auto; display: block; padding-bottom: 40px;}
       .panel-right { height: auto; border-left: none; border-top: 1px solid var(--border); }
       .form-group-fill { flex: none; height: auto; }
-      textarea.input-std-fill { height: 200px; resize: vertical; } /* 移动端恢复固定高度和手动调整 */
+      textarea.input-std-fill { height: 200px; resize: vertical; }
       #urlContainer { max-height: none; }
     }
 
-    /* 其他组件样式保持不变 */
     .chip {
       background: var(--tag-bg);
       border-radius: 6px;
@@ -192,7 +234,8 @@
     }
     .input-std:focus { border-color: var(--focus-ring); box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.2); }
 
-    .grid-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; }
+    /* 修改为 2 列布局，因为移除了 Tag */
+    .grid-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
 
     .btn-primary {
       background: var(--focus-ring); color: white; border: none; padding: 14px 24px; border-radius: var(--radius); font-size: 1rem; font-weight: 500; cursor: pointer; width: 100%; display: flex; justify-content: center; align-items: center; gap: 8px; flex-shrink: 0;
@@ -224,7 +267,14 @@
     <!-- 左侧：编辑区 -->
     <div class="panel-left">
       
-      <!-- URLs Chip Input (高度自动伸缩，有上限) -->
+      <!-- 动态 API 地址显示区 -->
+      <div class="api-display-box" onclick="app.copyApiUrl()" title="点击复制 API 地址">
+        <span class="api-label-badge">POST</span>
+        <span id="apiUrlText">loading...</span>
+        <span class="copy-hint">点击复制</span>
+      </div>
+
+      <!-- URLs Chip Input -->
       <div class="form-group">
         <label>通知地址 URLs (按回车或逗号添加)</label>
         <div class="chip-container" id="urlContainer" onclick="document.getElementById('urlInput').focus()">
@@ -232,7 +282,7 @@
         </div>
       </div>
 
-      <!-- 这一行固定高度 -->
+      <!-- 这一行改为2列，移除了Tags -->
       <div class="grid-row form-group">
         <div>
           <label>类型 Type</label>
@@ -250,13 +300,6 @@
             <option value="markdown">Markdown</option>
             <option value="html">HTML</option>
           </select>
-        </div>
-        <!-- Tags -->
-        <div style="display: flex; flex-direction: column;">
-          <label>标签 Tags</label>
-          <div class="chip-container" id="tagContainer" style="flex: 1;" onclick="document.getElementById('tagInput').focus()">
-            <input type="text" class="chip-input" id="tagInput" placeholder="dev">
-          </div>
         </div>
       </div>
 
@@ -299,7 +342,6 @@
   </div>
 
   <script>
-    // 图标和逻辑部分保持不变
     const Icons = {
       telegram: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.48-1.02-2.42-1.63-1.09-.72-.38-1.11.24-1.74.14-.15 2.57-2.35 2.62-2.54.01-.02.01-.05 0-.07-.01-.02-.04-.03-.06-.03-.02 0-.2.12-.56.36L8.4 12.4c-.4.27-.78.41-1.15.4-.41-.01-1.2-.23-1.79-.42-.72-.24-.96-.37-.92-.78.02-.21.32-.43.89-.66 3.5-1.52 5.83-2.53 6.99-3.01 3.33-1.39 4.02-1.66 4.47-1.66.1 0 .32.02.47.14.12.1.16.23.17.33 0 .1 0 .23-.01.36z"/></svg>',
       mail: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>',
@@ -421,12 +463,19 @@
 
     const app = {
       urlInput: null,
-      tagInput: null,
 
       init() {
         this.urlInput = new ChipInput('urlContainer', 'urlInput', 'apprise_urls', true);
-        this.tagInput = new ChipInput('tagContainer', 'tagInput', 'apprise_tags', false);
+        
+        document.getElementById('apiUrlText').innerText = 'https://your-domain.com/notify';
 
+        // 自动生成 API 地址
+        if (window.location.protocol != 'file:') {
+          const apiUrl = window.location.origin + '/notify';
+        document.getElementById('apiUrlText').innerText = apiUrl;
+        }
+
+        // 初始化其他输入
         ['type', 'format', 'title', 'body'].forEach(id => {
           const el = document.getElementById(id);
           const val = localStorage.getItem('apprise_' + id);
@@ -437,13 +486,27 @@
         this.renderHistory();
       },
 
+      copyApiUrl() {
+        const url = document.getElementById('apiUrlText').innerText;
+        navigator.clipboard.writeText(url).then(() => {
+          // 简单的视觉反馈
+          const hint = document.querySelector('.copy-hint');
+          const originalText = hint.innerText;
+          hint.innerText = "已复制!";
+          hint.style.color = "var(--success)"; // 使用 CSS 变量绿色
+          setTimeout(() => {
+            hint.innerText = originalText;
+            hint.style.color = "";
+          }, 1500);
+        });
+      },
+
       async send() {
         const rawTitle = document.getElementById('title').value;
         const rawBody = document.getElementById('body').value;
 
         const payload = {
           urls: this.urlInput.getValue(),
-          tags: this.tagInput.getValue(),
           type: document.getElementById('type').value,
           format: document.getElementById('format').value,
           title: rawTitle.trim() || "Apprise Notification",
@@ -513,7 +576,6 @@
         if (!item) return;
 
         this.urlInput.setValue(item.urls ? item.urls.split(',') : []);
-        this.tagInput.setValue(item.tags ? item.tags.split(',') : []);
         document.getElementById('type').value = item.type;
         document.getElementById('format').value = item.format;
         document.getElementById('title').value = item.title;
@@ -537,7 +599,6 @@
         
         const payload = {
           urls: this.urlInput.getValue(),
-          tags: this.tagInput.getValue(),
           title: rawTitle.trim() || "Apprise Notification",
           body: rawBody.trim() || "Test notification from Apprise Console"
         };
