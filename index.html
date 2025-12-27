@@ -467,7 +467,6 @@
         msg_copied: "已复制!",
         msg_no_url: "请至少添加一个 URL 地址",
         msg_clear_history: "确定要清空历史记录吗？",
-        fmt_text_suffix: " (纯文本)",
         opt_info: "Info",
         opt_success: "Success",
         opt_warning: "Warning",
@@ -496,7 +495,6 @@
         msg_copied: "Copied!",
         msg_no_url: "Please add at least one URL",
         msg_clear_history: "Are you sure you want to clear history?",
-        fmt_text_suffix: " (Plain)",
         opt_info: "Info",
         opt_success: "Success",
         opt_warning: "Warning",
@@ -524,7 +522,6 @@
         msg_copied: "コピーしました!",
         msg_no_url: "URLを1つ以上追加してください",
         msg_clear_history: "履歴を消去してもよろしいですか？",
-        fmt_text_suffix: " (テキスト)",
         opt_info: "Info",
         opt_success: "Success",
         opt_warning: "Warning",
@@ -887,7 +884,6 @@
           div.className = 'custom-option';
           
           let label = key === 'html' ? 'HTML' : key.charAt(0).toUpperCase() + key.slice(1);
-          if(key === 'text') label += this.t('fmt_text_suffix');
           
           div.innerHTML = `${FormatIcons[key]} ${label}`;
           div.onclick = (e) => {
@@ -970,7 +966,6 @@
       updateFormatSelectLabel() {
         const val = document.getElementById('format').value;
         let label = val === 'html' ? 'HTML' : val.charAt(0).toUpperCase() + val.slice(1);
-        if(val === 'text') label += this.t('fmt_text_suffix');
         document.getElementById('formatDisplay').innerHTML = FormatIcons[val] + ' ' + label;
       },
 
