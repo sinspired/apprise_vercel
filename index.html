@@ -618,6 +618,7 @@
 
       initTheme() {
         const saved = localStorage.getItem('theme');
+        this.updateThemeColor(saved);
         const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
         let theme = 'light';
         if (saved === 'dark' || (!saved && prefersDark)) {
@@ -629,6 +630,7 @@
 
       toggleTheme() {
         const current = document.documentElement.getAttribute('data-theme');
+        this.updateThemeColor(current);
         const next = current === 'dark' ? 'light' : 'dark';
         document.documentElement.setAttribute('data-theme', next);
         localStorage.setItem('theme', next);
