@@ -156,6 +156,7 @@
       pointer-events: none;
     }
     .api-display-box:hover .copy-hint { opacity: 1; }
+    .btn:hover .copy-hint { opacity: 1; }
 
     /* URL Chips */
     .chip-container {
@@ -244,6 +245,7 @@
       font-size: 1rem; font-weight: 600; cursor: pointer;
       display: flex; justify-content: center; align-items: center; gap: 8px;
       transition: all 0.2s;
+      position: relative; /* 新增 */
     }
     .btn svg { width: 18px; height: 18px; fill: currentColor; }
     
@@ -258,6 +260,9 @@
       border-color: var(--success) !important;
       background: rgba(52, 199, 89, 0.1) !important;
     }
+
+    /* 当按钮处于“已复制”状态时，隐藏提示语，避免遮挡“已复制!”文本 */
+    .btn-copied .copy-hint { opacity: 0 !important; }
 
     /* Right Panel */
     .panel-header {
@@ -403,6 +408,8 @@
         <button id="copyBtn" class="btn btn-secondary">
           <svg viewBox="0 0 24 24"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>
           <span data-i18n="btn_curl">cURL</span>
+          <!-- 新增：悬停提示语 -->
+          <span class="copy-hint" data-i18n="hint_click_copy">点击复制</span>
         </button>
       </div>
     </div>
@@ -966,7 +973,8 @@
       copyApiUrl() {
         const url = document.getElementById('apiUrlText').innerText;
         navigator.clipboard.writeText(url).then(() => {
-          const hint = document.querySelector('.copy-hint');
+          // 修改：限定选择器范围，只获取 API Box 里的提示元素
+          const hint = document.querySelector('#apiBox .copy-hint');
           const originalText = hint.innerText;
           hint.innerText = this.t('msg_copied');
           hint.style.color = "var(--success)";
