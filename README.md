@@ -14,21 +14,21 @@
 </div>
 </br>
 
-## 🌐 Vercel 一键部署
+## 🛠️ 部署
 
-点击下方按钮，将 Apprise 部署到自己的 Vercel 账户中：
+点击下方按钮，一键部署到你的 `Vercel` 账户
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/sinspired/apprise_vercel)
 
 > [!TIP]
 > 直接访问 `https://your-project.vercel.app` 可在前端页面测试 `API` 和 `通知目标`。
 
-1. 部署完成后，您将获得一个专属域名（如 `https://your-project.vercel.app`）；
-2. 您的 API 地址即为：`https://your-project.vercel.app/notify`；
-3. 进入project，点击 `setting` -> `domains` -> `add domain`，添加自定义域名；
-4. 根据提示添加 `cname` 记录 和 `txt` 记录（可选）
+1. **获取域名**: 部署完成自动分配（如 `https://your-project.vercel.app`）；
+2. **API 地址**：`https://your-project.vercel.app/notify`；
+3. **添加域名**: 进入project，点击 `setting` -> `domains` -> `add domain`；
+4. **验证域名**: 根据提示添加 `cname` 记录 和 `txt` 记录（可选）
 
-## 🔗 通知渠道
+## 🔔 通知渠道
 
 支持 `100+` 通知渠道，完整列表请查阅 [Apprise 官方 Wiki]([https://](https://github.com/caronc/apprise/wiki))
 
@@ -41,7 +41,7 @@
   
 ## 🤖 API 调用
 
-您可以从任何支持 HTTP 请求的程序或脚本中调用此服务。
+可以从任何支持 HTTP 请求的程序或脚本中调用此服务。
 
 - **请求方式**: `POST`
 - **接口路径**: `/notify`
