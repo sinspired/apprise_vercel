@@ -117,6 +117,24 @@
       color: var(--text-sub); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em;
     }
 
+    .form-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+    /* 让原有的 label 在这个容器里不需要下边距，由容器控制 */
+    .form-header label { margin-bottom: 0; }
+
+    /* 帮助链接样式 */
+    .help-link {
+      display: flex; align-items: center; gap: 4px;
+      font-size: 0.75rem; color: var(--focus-ring); text-decoration: none;
+      cursor: pointer; transition: opacity 0.2s; font-weight: 500;
+    }
+    .help-link:hover { opacity: 0.7; }
+    .help-link svg { width: 14px; height: 14px; stroke-width: 2; }
+
     /* API Display Box */
     .api-display-box {
       display: flex; align-items: center; background: var(--code-bg);
@@ -318,7 +336,14 @@
 
       <!-- URLs Chip Input -->
       <div class="form-group">
-        <label data-i18n="label_urls">通知地址 URLs (按回车或逗号添加，点击文字修改)</label>
+        <div class="form-header">
+          <label data-i18n="label_urls">通知地址 URLs (按回车或逗号添加，点击文字修改)</label>
+          <!-- 右侧示例链接 -->
+          <a href="https://github.com/caronc/apprise/wiki" target="_blank" class="help-link">
+            <span data-i18n="link_examples">查看示例</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+          </a>
+        </div>
         <div class="chip-container" id="urlContainer">
           <input type="text" class="chip-input" id="urlInput" data-i18n-placeholder="placeholder_urls" placeholder="tgram://..., mailto://..." autocomplete="off">
         </div>
@@ -333,7 +358,7 @@
           <div class="custom-select-trigger" id="typeTrigger">
             <div class="custom-select-value" id="typeDisplay"></div>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
               <polyline points="6 9 12 15 18 9"></polyline>
             </svg>
           </div>
@@ -348,7 +373,7 @@
           <div class="custom-select-trigger" id="formatTrigger">
             <div class="custom-select-value" id="formatDisplay"></div>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
               <polyline points="6 9 12 15 18 9"></polyline>
             </svg>
           </div>
@@ -410,6 +435,7 @@
         hint_copy_api: "点击复制 API 地址",
         hint_click_copy: "点击复制",
         label_urls: "通知 URLs (按回车或逗号添加)",
+        link_examples: "查看示例",
         placeholder_urls: "tgram://..., mailto://...",
         label_type: "类型",
         label_format: "格式",
@@ -438,6 +464,7 @@
         hint_copy_api: "Click to copy API URL",
         hint_click_copy: "Copy",
         label_urls: "Notification URLs (Enter/Comma to add)",
+        link_examples: "Examples",
         placeholder_urls: "tgram://..., mailto://...",
         label_type: "Type",
         label_format: "Format",
@@ -466,6 +493,7 @@
         hint_copy_api: "クリックしてAPI URLをコピー",
         hint_click_copy: "コピー",
         label_urls: "通知 URLs (Enter/カンマで追加)",
+        link_examples: "例を見る",
         placeholder_urls: "tgram://..., mailto://...",
         label_type: "タイプ Type",
         label_format: "フォーマット Format",
