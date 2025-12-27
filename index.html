@@ -13,6 +13,7 @@
       --text-sub: #86868b;
       --border: #d2d2d7;
       --focus-ring: #0071e3;
+      --help-link: #0ab5ff80;
       --danger: #ff3b30;
       --success: #34c759;
       --warning: #ff9f0a;
@@ -31,6 +32,7 @@
       --border: #424245;
       --tag-bg: #3a3f55;
       --focus-ring: #0a84ff;
+      --help-link: #0164c7ca;
       --code-bg: #1c1c1e;
     }
 
@@ -114,7 +116,8 @@
     .form-group { margin-bottom: 18px; flex-shrink: 0; }
     label {
       display: block; font-size: 0.8rem; font-weight: 600;
-      color: var(--text-sub); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em;
+      color: var(--text-sub); margin-bottom: 6px; letter-spacing: 0.05em;
+      text-transform: capitalize;
     }
 
     .form-header {
@@ -129,7 +132,7 @@
     /* 帮助链接样式 */
     .help-link {
       display: flex; align-items: center; gap: 4px;
-      font-size: 0.75rem; color: var(--focus-ring); text-decoration: none;
+      font-size: 0.75rem; color: var(--help-link); text-decoration: none;
       cursor: pointer; transition: opacity 0.2s; font-weight: 500;
     }
     .help-link:hover { opacity: 0.7; }
@@ -441,8 +444,8 @@
         theme_switch_title: "切换主题",
         hint_copy_api: "点击复制 API 地址",
         hint_click_copy: "点击复制",
-        label_urls: "通知 URLs (按回车或逗号添加)",
-        link_examples: "查看示例",
+        label_urls: "目标 (按回车或逗号添加)",
+        link_examples: "示例",
         placeholder_urls: "tgram://..., mailto://...",
         label_type: "类型",
         label_format: "格式",
@@ -470,14 +473,14 @@
         theme_switch_title: "Switch Theme",
         hint_copy_api: "Click to copy API URL",
         hint_click_copy: "Copy",
-        label_urls: "Notification URLs (Enter/Comma to add)",
-        link_examples: "Examples",
+        label_urls: "Targets (Enter/Comma to add)",
+        link_examples: "Samples",
         placeholder_urls: "tgram://..., mailto://...",
-        label_type: "Type",
-        label_format: "Format",
-        label_title: "Title",
+        label_type: "TYPE",
+        label_format: "FORMAT",
+        label_title: "TITLE",
         placeholder_title: "Apprise Notification",
-        label_body: "Body",
+        label_body: "BODY",
         placeholder_body: "Test notification from Apprise Console",
         btn_send: "Send",
         btn_curl: "Copy cURL",
@@ -495,18 +498,17 @@
       },
       "ja": {
         app_title: "📢 Apprise 通知",
-        lang_switch_title: "言語を切り替え",
-        theme_switch_title: "テーマを切り替え",
+        lang_switch_title: "言語切替",
         hint_copy_api: "クリックしてAPI URLをコピー",
         hint_click_copy: "コピー",
-        label_urls: "通知 URLs (Enter/カンマで追加)",
-        link_examples: "例を見る",
+        label_urls: "通知先 (Enter/カンマで追加)",
+        link_examples: "例（れい）",
         placeholder_urls: "tgram://..., mailto://...",
-        label_type: "タイプ Type",
-        label_format: "フォーマット Format",
-        label_title: "タイトル Title",
+        label_type: "タイプ",
+        label_format: "フォーマット",
+        label_title: "タイトル",
         placeholder_title: "Apprise 通知",
-        label_body: "本文 Body",
+        label_body: "本文",
         placeholder_body: "Apprise コンソールからのテスト通知",
         btn_send: "送信",
         btn_curl: "cURLをコピー",
@@ -514,7 +516,7 @@
         header_history: "履歴",
         btn_clear: "クリア",
         msg_copied: "コピーしました!",
-        msg_no_url: "URLを少なくとも1つ追加してください",
+        msg_no_url: "URLを1つ以上追加してください",
         msg_clear_history: "履歴を消去してもよろしいですか？",
         fmt_text_suffix: " (テキスト)",
         opt_info: "Info",
