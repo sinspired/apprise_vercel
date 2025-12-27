@@ -232,6 +232,12 @@
     }
     .input-std:focus { border-color: var(--focus-ring); box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.2); }
 
+    /* 全局降低 Placeholder 透明度 */
+    ::placeholder {
+      color: var(--text-sub); /* 使用次级文本颜色 */
+      opacity: 0.5;           /* 进一步降低不透明度 */
+    }
+
     .form-group-fill { flex: 1; display: flex; flex-direction: column; min-height: 150px; margin-bottom: 18px; }
     textarea.input-std-fill {
       flex: 1; resize: none; width: 100%; padding: 12px;
@@ -248,7 +254,7 @@
       font-size: 1rem; font-weight: 600; cursor: pointer;
       display: flex; justify-content: center; align-items: center; gap: 8px;
       transition: all 0.2s;
-      position: relative; /* 新增 */
+      position: relative;
     }
     .btn svg { width: 18px; height: 18px; fill: currentColor; }
     
@@ -411,7 +417,7 @@
         <button id="copyBtn" class="btn btn-secondary">
           <svg viewBox="0 0 24 24"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>
           <span data-i18n="btn_curl">cURL</span>
-          <!-- 新增：悬停提示语 -->
+          <!-- 悬停提示语 -->
           <span class="copy-hint" data-i18n="hint_click_copy">点击复制</span>
         </button>
       </div>
