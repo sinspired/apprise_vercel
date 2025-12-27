@@ -993,7 +993,7 @@
         const rawBody = document.getElementById('body').value;
         const typeVal = document.getElementById('type').value;
 
-                // 获取当前语言环境下的默认值
+        // 获取当前语言环境下的默认值
         const defaultTitle = this.t('placeholder_title');
         const defaultBody = this.t('placeholder_body');
 
@@ -1001,8 +1001,8 @@
           urls: this.urlInput.getValue(),
           type: typeVal,
           format: document.getElementById('format').value,
-          title: rawTitle.trim() || "Apprise Notification",
-            body: rawBody.trim() || "Test notification from Apprise Console"
+          title: rawTitle.trim() || defaultTitle,
+          body: rawBody.trim() || defaultBody
         };
 
         if (!payload.urls) {
