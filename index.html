@@ -21,17 +21,16 @@
       --code-bg: #f0f0f0;
     }
 
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --bg: #000000;
-        --card-bg: #1c1c1e;
-        --text-main: #f5f5f7;
-        --text-sub: #86868b;
-        --border: #424245;
-        --tag-bg: #3a3f55;
-        --focus-ring: #2997ff;
-        --code-bg: #2c2c2e;
-      }
+    /* 深色模式变量 */
+    html[data-theme="dark"] {
+      --bg: #000000;
+      --card-bg: #1c1c1e;
+      --text-main: #f5f5f7;
+      --text-sub: #86868b;
+      --border: #424245;
+      --tag-bg: #3a3f55;
+      --focus-ring: #0a84ff;
+      --code-bg: #1c1c1e;
     }
 
     * { box-sizing: border-box; outline: none; }
@@ -46,6 +45,7 @@
       display: flex;
       flex-direction: column;
       overflow: hidden;
+      transition: background-color 0.3s ease, color 0.3s ease;
     }
 
     /* Header */
@@ -59,6 +59,7 @@
       align-items: center;
       flex-shrink: 0;
       z-index: 10;
+      transition: background-color 0.3s ease, border-color 0.3s ease;
     }
 
     header h1 { margin: 0; font-size: 1.2rem; font-weight: 600; }
@@ -88,6 +89,7 @@
       overflow-y: auto;
       display: flex;
       flex-direction: column;
+      transition: background-color 0.3s ease;
     }
     .panel-left { border-right: 1px solid var(--border); }
     .panel-right { background: var(--card-bg); }
@@ -103,7 +105,7 @@
       display: flex; align-items: center; background: var(--code-bg);
       border: 1px dashed var(--focus-ring); padding: 10px 14px;
       border-radius: var(--radius); margin-bottom: 24px;
-      cursor: pointer; transition: background 0.2s;
+      cursor: pointer; transition: background 0.2s; position: relative;
     }
     .api-display-box:hover { background: var(--tag-bg); }
     .api-label-badge {
@@ -111,10 +113,16 @@
       color: white; padding: 2px 6px; border-radius: 4px; margin-right: 10px; flex-shrink: 0;
     }
     #apiUrlText { font-family: monospace; font-size: 0.9rem; flex-grow: 1; word-break: break-all; }
-    .copy-hint { font-size: 0.75rem; color: var(--focus-ring); opacity: 0; transition: opacity 0.2s; margin-left: 8px;}
+    
+    .copy-hint {
+      position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+      font-size: 0.75rem; color: var(--focus-ring); opacity: 0; transition: opacity 0.2s;
+      background: var(--tag-bg); padding-left: 8px; box-shadow: -8px 0 10px -2px var(--tag-bg);
+      pointer-events: none;
+    }
     .api-display-box:hover .copy-hint { opacity: 1; }
 
-    /* URL Chips - 点击卡片原地编辑 */
+    /* URL Chips */
     .chip-container {
       background: var(--card-bg); border: 1px solid var(--border);
       border-radius: var(--radius); padding: 6px;
@@ -127,28 +135,19 @@
     .chip {
       background: var(--tag-bg); border-radius: 6px; padding: 6px 10px;
       font-size: 0.85rem; display: inline-flex; align-items: center; gap: 8px;
-      max-width: 100%; /* 限制最大宽度不超过父容器 */
-      border: 1px solid transparent;
+      max-width: 100%; border: 1px solid transparent;
     }
     .chip svg { width: 14px; height: 14px; opacity: 0.7; flex-shrink: 0; }
     
-    /* 交互式编辑样式 - 防止溢出 */
     .chip-text {
-      flex: 1; /* 自适应宽度 */
-      min-width: 0; /* 允许 Flex 子项收缩到内容以下，防止溢出 */
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-      cursor: text; outline: none; border-radius: 2px; padding: 0 2px;
-      transition: all 0.2s;
+      flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      cursor: text; outline: none; border-radius: 2px; padding: 0 2px; transition: all 0.2s;
     }
     .chip-text:hover { background: rgba(0,0,0,0.05); }
     .chip-text:focus { 
-      background: var(--card-bg); 
-      color: var(--text-main);
+      background: var(--card-bg); color: var(--text-main);
       box-shadow: 0 0 0 2px var(--focus-ring); 
-      /* 编辑时允许换行 */
-      white-space: pre-wrap; 
-      word-break: break-all; 
-      overflow: visible;
+      white-space: pre-wrap; word-break: break-all; overflow: visible;
     }
 
     .chip-close { cursor: pointer; opacity: 0.5; font-weight: bold; padding: 0 2px; flex-shrink: 0; }
@@ -164,11 +163,12 @@
       width: 100%; padding: 10px 12px;
       background: var(--card-bg); border: 1px solid var(--border);
       border-radius: var(--radius); cursor: pointer;
-      font-size: 0.95rem; color: var(--text-main);
+      font-size: 0.95rem; color: var(--text-sub); transition: border-color 0.2s;
+      user-select: none;
     }
     .custom-select-trigger:hover { border-color: var(--text-sub); }
     .custom-select-value { display: flex; align-items: center; gap: 8px; }
-    .custom-select-value svg { width: 16px; height: 16px; flex-shrink: 0; }
+    .custom-select-value svg { width: 16px; height: 16px; flex-shrink: 0; color: var(--text-sub);}
     
     .custom-options {
       position: absolute; top: 105%; left: 0; right: 0;
@@ -176,21 +176,20 @@
       border-radius: var(--radius); box-shadow: 0 4px 12px rgba(0,0,0,0.1);
       z-index: 20; display: none; overflow: hidden;
     }
-    .custom-options.open { display: block; animation: fadeIn 0.1s ease; }
+    .custom-options.open { display: block; animation: fadeIn 0.1s ease;}
     .custom-option {
       padding: 10px 12px; cursor: pointer; display: flex; align-items: center; gap: 8px;
-      font-size: 0.95rem; transition: background 0.1s;
+      font-size: 0.95rem; transition: background 0.1s; color: var(--text-main);
     }
     .custom-option:hover { background: var(--tag-bg); }
-    .custom-option svg { width: 16px; height: 16px; }
+    .custom-option svg { width: 16px; height: 16px; color: var(--text-sub);}
     @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* Standard Inputs */
+    /* Inputs */
     .input-std {
       width: 100%; padding: 10px 12px; background: var(--card-bg);
       border: 1px solid var(--border); border-radius: var(--radius);
       color: var(--text-main); font-size: 0.95rem; appearance: none;
-      font-family: monospace;
     }
     .input-std:focus { border-color: var(--focus-ring); box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.2); }
 
@@ -203,24 +202,28 @@
     }
     textarea.input-std-fill:focus { border-color: var(--focus-ring); box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.2); }
 
-    /* Action Buttons*/
-    .actions-row { 
-      display: grid; 
-      grid-template-columns: 1fr 1fr; /* 强制各占一半 */
-      gap: 12px; 
-      margin-top: auto; 
-    }
+    /* Action Buttons */
+    .actions-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: auto; }
     .btn {
       border: none; padding: 12px 20px; border-radius: var(--radius);
       font-size: 1rem; font-weight: 600; cursor: pointer;
       display: flex; justify-content: center; align-items: center; gap: 8px;
+      transition: all 0.2s;
     }
     .btn svg { width: 18px; height: 18px; fill: currentColor; }
     
     .btn-primary { background: var(--focus-ring); color: white; }
     .btn-primary:hover { opacity: 0.9; }
+    
     .btn-secondary { background: var(--card-bg); border: 1px solid var(--border); color: var(--text-main); }
     .btn-secondary:hover { background: var(--tag-bg); }
+
+    /* 复制成功状态样式 */
+    .btn-copied {
+      color: var(--success) !important;
+      border-color: var(--success) !important;
+      background: rgba(52, 199, 89, 0.1) !important;
+    }
 
     /* Right Panel */
     .panel-header {
@@ -233,10 +236,10 @@
     #resultArea {
       padding: 15px; background: var(--code-bg); font-family: monospace; font-size: 0.85rem;
       white-space: pre-wrap; word-break: break-all; border-radius: var(--radius);
-      border: 1px solid transparent; margin-bottom: 20px; max-height: 250px; overflow-y: auto;
+      border: 1px solid transparent; margin-bottom: 20px; max-height: 250px; overflow-y: auto; color: var(--text-main);
     }
-    .response-ok { border-color: var(--success); color: var(--success); background: rgba(52, 199, 89, 0.05); }
-    .response-err { border-color: var(--danger); color: var(--danger); background: rgba(255, 59, 48, 0.05); }
+    .response-ok { border-color: var(--success); color: var(--success) !important; background: rgba(52, 199, 89, 0.05) !important; }
+    .response-err { border-color: var(--danger); color: var(--danger) !important; background: rgba(255, 59, 48, 0.05) !important; }
 
     .history-list { display: flex; flex-direction: column; gap: 10px; }
     .history-item {
@@ -258,8 +261,7 @@
       .panel-left, .panel-right { height: auto; border: none; overflow: visible; }
       .panel-right { border-top: 8px solid var(--bg); }
       textarea.input-std-fill { height: 180px; }
-      /* 保持按钮并列 */
-      .actions-row { grid-template-columns: 1fr 1fr; } 
+      .actions-row { grid-template-columns: 1fr 1fr; }
     }
   </style>
 </head>
@@ -268,7 +270,9 @@
   <header>
     <h1>📢 Apprise Notify</h1>
     <div class="header-right">
-      <button class="icon-btn-header" id="themeBtn" title="切换主题" onclick="app.toggleTheme()"></button>
+      <button class="icon-btn-header" id="themeBtn" title="切换主题">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
       <a href="https://github.com/sinspired/apprise_vercel" target="_blank" class="icon-btn-header" title="GitHub">
         <svg viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
       </a>
@@ -278,7 +282,7 @@
   <div class="main-layout">
     <div class="panel-left">
       <!-- API Display -->
-      <div class="api-display-box" onclick="app.copyApiUrl()" title="点击复制 API 地址">
+      <div class="api-display-box" id="apiBox" title="点击复制 API 地址">
         <span class="api-label-badge">POST</span>
         <span id="apiUrlText">loading...</span>
         <span class="copy-hint">点击复制</span>
@@ -287,7 +291,7 @@
       <!-- URLs Chip Input -->
       <div class="form-group">
         <label>通知地址 URLs (按回车或逗号添加，点击文字修改)</label>
-        <div class="chip-container" id="urlContainer" onclick="document.getElementById('urlInput').focus()">
+        <div class="chip-container" id="urlContainer">
           <input type="text" class="chip-input" id="urlInput" placeholder="tgram://..., mailto://..." autocomplete="off">
         </div>
       </div>
@@ -298,61 +302,46 @@
         <!-- Custom Type Select -->
         <div class="custom-select-wrapper">
           <label>类型 Type</label>
-          <div class="custom-select-trigger" onclick="app.toggleTypeSelect()">
-            <div class="custom-select-value" id="typeDisplay">
-              <!-- JS Populated -->
-            </div>
+          <div class="custom-select-trigger" id="typeTrigger">
+            <div class="custom-select-value" id="typeDisplay"></div>
             <span>▼</span>
           </div>
           <div class="custom-options" id="typeOptions">
-            <div class="custom-option" onclick="app.setType('info')">
-              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--focus-ring)"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-              Info
-            </div>
-            <div class="custom-option" onclick="app.setType('success')">
-              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--success)"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-              Success
-            </div>
-            <div class="custom-option" onclick="app.setType('warning')">
-              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--warning)"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-              Warning
-            </div>
-            <div class="custom-option" onclick="app.setType('error')">
-              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--danger)"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
-              Error
-            </div>
+            <!-- Options populated by JS -->
           </div>
-          <!-- Hidden Input for Logic -->
           <input type="hidden" id="type" value="info">
         </div>
 
-        <div>
+        <div class="custom-select-wrapper">
           <label>格式 Format</label>
-          <select id="format" class="input-std" onchange="app.saveInput('format')">
-            <option value="text">Text</option>
-            <option value="markdown">Markdown</option>
-            <option value="html">HTML</option>
-          </select>
+          <div class="custom-select-trigger" id="formatTrigger">
+            <div class="custom-select-value" id="formatDisplay"></div>
+            <span>▼</span>
+          </div>
+          <div class="custom-options" id="formatOptions">
+            <!-- Options populated by JS -->
+          </div>
+          <input type="hidden" id="format" value="text">
         </div>
       </div>
 
       <div class="form-group">
         <label>标题 Title</label>
-        <input id="title" class="input-std" placeholder="Apprise Notification" oninput="app.saveInput('title')">
+        <input id="title" class="input-std" placeholder="Apprise Notification">
       </div>
 
       <div class="form-group-fill">
         <label>内容 Body</label>
-        <textarea id="body" class="input-std-fill" placeholder="Test notification from Apprise Console" oninput="app.saveInput('body')"></textarea>
+        <textarea id="body" class="input-std-fill" placeholder="Test notification from Apprise Console"></textarea>
       </div>
 
       <div class="actions-row">
-        <button id="sendBtn" class="btn btn-primary" onclick="app.send()">
+        <button id="sendBtn" class="btn btn-primary">
           <span class="spinner"></span>
           <svg viewBox="0 0 24 24"><path d="M22 2L11 13"/><path d="M22 2L15 22L11 13L2 9L22 2Z"/></svg>
           <span>发送通知</span>
         </button>
-        <button class="btn btn-secondary" onclick="app.copyCurl()">
+        <button id="copyBtn" class="btn btn-secondary">
           <svg viewBox="0 0 24 24"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>
           <span>cURL</span>
         </button>
@@ -368,7 +357,7 @@
 
       <div class="panel-header" style="border-top: 1px solid var(--border); padding-top: 20px; margin-top: 0;">
         <span>历史记录 History</span>
-        <button class="btn-text-danger" onclick="app.clearHistory()">清空</button>
+        <button class="btn-text-danger" id="clearHistoryBtn">清空</button>
       </div>
       
       <div class="scroll-area">
@@ -378,6 +367,7 @@
   </div>
 
   <script>
+    // 定义完整的 SVG 图标对象
     const Icons = {
       telegram: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.48-1.02-2.42-1.63-1.09-.72-.38-1.11.24-1.74.14-.15 2.57-2.35 2.62-2.54.01-.02.01-.05 0-.07-.01-.02-.04-.03-.06-.03-.02 0-.2.12-.56.36L8.4 12.4c-.4.27-.78.41-1.15.4-.41-.01-1.2-.23-1.79-.42-.72-.24-.96-.37-.92-.78.02-.21.32-.43.89-.66 3.5-1.52 5.83-2.53 6.99-3.01 3.33-1.39 4.02-1.66 4.47-1.66.1 0 .32.02.47.14.12.1.16.23.17.33 0 .1 0 .23-.01.36z"/></svg>',
       mail: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>',
@@ -388,10 +378,16 @@
     };
 
     const TypeIcons = {
-      info: '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--focus-ring)"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>',
+      info: '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--focus-ring)"><circle cx="12" cy="12" r="10"/><line x1="12" y1="11" x2="12" y2="18"/><circle cx="12" cy="7" r="0.4"/></svg>',
       success: '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--success)"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>',
-      warning: '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--warning)"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
+      warning: '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--warning)"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/><circle cx="12" cy="17" r="0.5"/></svg>',
       error: '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--danger)"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>'
+    };
+
+    const FormatIcons = {
+      text: '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24""><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>',
+      markdown: '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path></svg>',
+      html: '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>'
     };
 
     class ChipInput {
@@ -407,6 +403,11 @@
         this.input.addEventListener('keydown', (e) => this.handleKey(e));
         this.input.addEventListener('paste', (e) => this.handlePaste(e));
         this.input.addEventListener('blur', () => this.addItemFromInput());
+        
+        // Focus container -> focus input
+        this.container.onclick = (e) => {
+          if(e.target === this.container) this.input.focus();
+        }
 
         const saved = localStorage.getItem(this.storageKey);
         if(saved) {
@@ -532,28 +533,86 @@
         this.initTheme();
         this.urlInput = new ChipInput('urlContainer', 'urlInput', 'apprise_urls');
         
+        // Auto API URL
         const apiUrl = window.location.protocol.startsWith('http') ? window.location.origin + '/notify' : 'http://host:port/notify';
         document.getElementById('apiUrlText').innerText = apiUrl;
 
-        ['format', 'title', 'body'].forEach(id => {
+        // Restore Inputs
+        ['title', 'body'].forEach(id => {
           const el = document.getElementById(id);
           const val = localStorage.getItem('apprise_' + id);
           if (val) el.value = val;
+          // Bind save events
+          el.addEventListener('input', () => this.saveInput(id));
         });
 
-        // Init Custom Type Select
-        const savedType = localStorage.getItem('apprise_type') || 'info';
-        this.setType(savedType);
+        // Setup Buttons
+        document.getElementById('themeBtn').addEventListener('click', () => this.toggleTheme());
+        document.getElementById('sendBtn').addEventListener('click', () => this.send());
+        document.getElementById('copyBtn').addEventListener('click', () => this.copyCurl());
+        document.getElementById('clearHistoryBtn').addEventListener('click', () => this.clearHistory());
+        document.getElementById('apiBox').addEventListener('click', () => this.copyApiUrl());
+        // 绑定下拉框触发事件
+        document.getElementById('typeTrigger').addEventListener('click', (e) => {
+            e.stopPropagation(); // 阻止冒泡
+            this.toggleTypeSelect();
+        });
+        document.getElementById('formatTrigger').addEventListener('click', (e) => {
+            e.stopPropagation(); // 阻止冒泡
+            this.toggleFormatSelect();
+        });
 
-        // Click outside to close dropdown
-        document.addEventListener('click', (e) => {
-          const wrapper = document.querySelector('.custom-select-wrapper');
-          if(!wrapper.contains(e.target)) {
-            document.getElementById('typeOptions').classList.remove('open');
-          }
+        // Initialize Selects
+        this.initTypeSelect();
+        this.initFormatSelect();
+
+        // Global click to close dropdowns
+        document.addEventListener('click', () => {
+          document.getElementById('typeOptions').classList.remove('open');
+          document.getElementById('formatOptions').classList.remove('open');
         });
 
         this.renderHistory();
+      },
+
+      initTypeSelect() {
+        const savedType = localStorage.getItem('apprise_type') || 'info';
+        this.setType(savedType);
+        
+        // Render options
+        const container = document.getElementById('typeOptions');
+        container.innerHTML = ''; // clear
+        Object.keys(TypeIcons).forEach(key => {
+          const div = document.createElement('div');
+          div.className = 'custom-option';
+          // Capitalize first letter
+          const label = key.charAt(0).toUpperCase() + key.slice(1);
+          div.innerHTML = `${TypeIcons[key]} ${label}`;
+          div.onclick = () => this.setType(key);
+          container.appendChild(div);
+        });
+      },
+      
+      initFormatSelect() {
+        const saved = localStorage.getItem('apprise_format') || 'text';
+        this.setFormat(saved);
+        
+        const container = document.getElementById('formatOptions');
+        container.innerHTML = '';
+        Object.keys(FormatIcons).forEach(key => {
+          const div = document.createElement('div');
+          div.className = 'custom-option';
+          // Label formatting
+          let label = key === 'html' ? 'HTML' : key.charAt(0).toUpperCase() + key.slice(1);
+          if(key === 'text') label += ' (纯文本)';
+          
+          div.innerHTML = `${FormatIcons[key]} ${label}`;
+          div.onclick = (e) => {
+            e.stopPropagation();
+            this.setFormat(key);
+          };
+          container.appendChild(div);
+        });
       },
 
       initTheme() {
@@ -575,18 +634,37 @@
 
       updateThemeIcon() {
         const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-        document.getElementById('themeBtn').innerHTML = isDark ? Icons.moon : Icons.sun;
+        // Logic: if dark, show sun (to switch to light); if light, show moon.
+        document.getElementById('themeBtn').innerHTML = isDark ? Icons.sun : Icons.moon;
       },
 
       toggleTypeSelect() {
+        document.getElementById('formatOptions').classList.remove('open');
         document.getElementById('typeOptions').classList.toggle('open');
+      },
+
+      toggleFormatSelect() {
+        // 关闭其他下拉框
+        document.getElementById('typeOptions').classList.remove('open');
+        document.getElementById('formatOptions').classList.toggle('open');
       },
 
       setType(val) {
         document.getElementById('type').value = val;
-        document.getElementById('typeDisplay').innerHTML = TypeIcons[val] + ' ' + val.charAt(0).toUpperCase() + val.slice(1);
+        // Update display
+        const label = val.charAt(0).toUpperCase() + val.slice(1);
+        document.getElementById('typeDisplay').innerHTML = TypeIcons[val] + ' ' + label;
         document.getElementById('typeOptions').classList.remove('open');
         localStorage.setItem('apprise_type', val);
+      },
+
+      setFormat(val) {
+        document.getElementById('format').value = val;
+        let label = val === 'html' ? 'HTML' : val.charAt(0).toUpperCase() + val.slice(1);
+        
+        document.getElementById('formatDisplay').innerHTML = FormatIcons[val] + ' ' + label;
+        document.getElementById('formatOptions').classList.remove('open');
+        this.saveInput('format');
       },
 
       saveInput(id) {
@@ -690,13 +768,13 @@
         this.urlInput.setValue(item.urls ? item.urls.split(',') : []);
         
         this.setType(item.type);
-        document.getElementById('format').value = item.format;
+        this.setFormat(item.format); // 使用 setFormat 更新 UI
+        
         document.getElementById('title').value = item.title;
         document.getElementById('body').value = item.body;
 
         this.saveInput('title');
         this.saveInput('body');
-        this.saveInput('format');
       },
 
       clearHistory() {
@@ -715,8 +793,20 @@
           format: document.getElementById('format').value
         };
         const cmd = `curl -X POST "${location.origin}/notify" -H "Content-Type: application/json" -d '${JSON.stringify(payload)}'`;
-        navigator.clipboard.writeText(cmd);
-        alert('CURL copied to clipboard');
+        
+        navigator.clipboard.writeText(cmd).then(() => {
+            const btn = document.getElementById('copyBtn');
+            const span = btn.querySelector('span');
+            const originalText = span.innerText;
+
+            span.innerText = "已复制!";
+            btn.classList.add('btn-copied');
+
+            setTimeout(() => {
+                span.innerText = originalText;
+                btn.classList.remove('btn-copied');
+            }, 500);
+        });
       }
     };
 
