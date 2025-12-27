@@ -617,37 +617,63 @@
       },
 
       initTheme() {
+        // 1. 获取用户设置和系统偏好
         const saved = localStorage.getItem('theme');
-        this.updateThemeColor(saved);
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        let theme = 'light';
-        if (saved === 'dark' || (!saved && prefersDark)) {
-          document.documentElement.setAttribute('data-theme', 'dark');
+        const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+        // 2. 判定当前应该显示的主题
+        let mode = 'light'; // 默认
+        if (saved === 'dark') {
+          mode = 'dark';
+        } else if (saved === 'light') {
+          mode = 'light';
+        } else if (systemDark) {
+          mode = 'dark';
         }
-        this.updateThemeIcon();
-        this.updateThemeColor(theme);
+
+        // 3. 统一应用
+        this.applyTheme(mode);
+        
+        // 4. 监听系统主题变化（当用户未手动设置时自动跟随）
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+          if (!localStorage.getItem('theme')) {
+            this.applyTheme(e.matches ? 'dark' : 'light');
+          }
+        });
       },
 
       toggleTheme() {
-        const current = document.documentElement.getAttribute('data-theme');
-        this.updateThemeColor(current);
+        // 获取当前通过 data-theme 属性表现出的状态
+        const current = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
         const next = current === 'dark' ? 'light' : 'dark';
-        document.documentElement.setAttribute('data-theme', next);
+        
+        // 保存并应用
         localStorage.setItem('theme', next);
-        this.updateThemeIcon();
-        this.updateThemeColor(next);
+        this.applyTheme(next);
       },
 
-      updateThemeIcon() {
-        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-        // Logic: if dark, show sun (to switch to light); if light, show moon.
-        document.getElementById('themeBtn').innerHTML = isDark ? Icons.sun : Icons.moon;
-      },
+      // 统一处理所有主题相关的变更
+      applyTheme(mode) {
+        // 1. 设置 DOM 属性 (控制 CSS 变量)
+        if (mode === 'dark') {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        } else {
+          document.documentElement.removeAttribute('data-theme');
+        }
 
-      updateThemeColor(theme) {
-        // Light: #ffffff (对应 CSS --card-bg), Dark: #1c1c1e (对应 CSS --card-bg)
-        const color = theme === 'dark' ? '#1c1c1e' : '#ffffff';
-        document.querySelector('meta[name="theme-color"]').setAttribute('content', color);
+        // 2. 设置按钮图标
+        const btn = document.getElementById('themeBtn');
+        if (btn) {
+          // 暗色模式显示太阳（提示切回亮色），亮色显示月亮
+          btn.innerHTML = mode === 'dark' ? Icons.sun : Icons.moon;
+        }
+
+        // 3. 设置浏览器地址栏颜色 (iOS/Android)
+        const metaTag = document.querySelector('meta[name="theme-color"]');
+        if (metaTag) {
+          // 对应 CSS 中的 --card-bg 变量: Light #ffffff, Dark ##1c1c1e
+          metaTag.setAttribute('content', mode === 'dark' ? '#1c1c1e' : '#ffffff');
+        }
       },
       
       toggleTypeSelect() {
