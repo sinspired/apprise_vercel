@@ -113,6 +113,39 @@
     .panel-left { border-right: 1px solid var(--border); }
     .panel-right { background: var(--card-bg); }
 
+    /* 历史记录区域滚动样式 */
+    .scroll-area {
+      flex: 1; 
+      min-height: 0;
+      overflow-y: auto; 
+      padding-right: 4px; /* 为滚动条留出一点空间，避免内容紧贴 */
+      margin-right: -4px; /* 将多余的空间移回，保持视觉对齐 */
+      
+      /* 滚动条样式 (Firefox) */
+      scrollbar-width: thin;
+      scrollbar-color: var(--border) transparent;
+    }
+    
+    /* 滚动条样式 (Chrome, Safari, Edge) */
+    .scroll-area::-webkit-scrollbar {
+      width: 12px;
+    }
+    
+    .scroll-area::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    
+    .scroll-area::-webkit-scrollbar-thumb {
+      background-color: var(--border);
+      border-radius: 10px;
+      /* 创建一个“内边距”效果，让滚动条看起来更细 */
+      border: 2px solid var(--card-bg); 
+    }
+    
+    .scroll-area::-webkit-scrollbar-thumb:hover {
+      background-color: var(--text-sub);
+    }
+
     .form-group { margin-bottom: 18px; flex-shrink: 0; }
     label {
       display: block; font-size: 0.8rem; font-weight: 600;
