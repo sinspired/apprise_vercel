@@ -189,7 +189,7 @@
       position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
       font-size: 0.75rem; color: var(--focus-ring); opacity: 0; transition: opacity 0.2s;
       background: var(--tag-bg); padding-left: 8px; box-shadow: -8px 0 10px -2px var(--tag-bg);
-      pointer-events: none;
+      pointer-events: none; border-radius: 4px;
     }
     .api-display-box:hover .copy-hint { opacity: 1; }
     .btn:hover .copy-hint { opacity: 1; }
@@ -341,6 +341,19 @@
       body { height: auto; overflow: auto; }
       .panel-left, .panel-right { height: auto; border: none; overflow: visible; }
       .panel-right { border-top: 8px solid var(--bg); }
+      header {
+        padding: 0 12px;
+      }
+      .panel-left, .panel-right{
+        padding: 12px;
+      }
+      .api-display-box{
+        padding: 10px 6px;
+      }
+
+      .copy-hint {
+        top: 14px;transform: translateY(0%);
+      }
       textarea.input-std-fill { height: 180px; }
       .actions-row { grid-template-columns: 1fr 1fr; }
     }
