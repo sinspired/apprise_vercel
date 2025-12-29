@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Apprise Notify</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#ffffff">
+    <link rel="stylesheet" href="style.css">
+
+    <!-- 图标配置 -->
+    <link rel="icon" type="image/svg+xml" href="static/favicon.svg">
+    <link rel="apple-touch-icon" href="static/icon-pwa.svg">
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="static/manifest.json">
+
+    <!-- iOS Meta -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Apprise">
+</head>
+
+<body>
+
+    <header>
+        <h1 data-i18n="app_title">📢 Apprise Notify</h1>
+        <div class="header-right">
+
+            <!-- Language Dropdown -->
+            <div class="header-dropdown-wrapper">
+                <button class="icon-btn-header" id="langTrigger" data-i18n-title="lang_switch_title"
+                    title="Switch Language">
+                    <svg class="stroke-icon" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="2" y1="12" x2="22" y2="12"></line>
+                        <path
+                            d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z">
+                        </path>
+                    </svg>
+                </button>
+                <div class="custom-options header-options" id="langOptions">
+                    <!-- Options injected by JS -->
+                </div>
+            </div>
+
+            <button class="icon-btn-header" id="themeBtn" data-i18n-title="theme_switch_title" title="切换主题">
+                <svg class="stroke-icon" viewBox="0 0 24 24">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+                </svg>
+            </button>
+
+            <a href="https://github.com/sinspired/apprise_vercel" target="_blank" class="icon-btn-header"
+                title="GitHub">
+                <svg viewBox="0 0 24 24">
+                    <path
+                        d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+                </svg>
+            </a>
+        </div>
+    </header>
+
+    <div class="main-layout">
+        <div class="panel-left">
+            <!-- API Display -->
+            <div class="api-display-box" id="apiBox" data-i18n-title="hint_copy_api" title="点击复制 API 地址">
+                <span class="api-label-badge">POST</span>
+                <span id="apiUrlText">loading...</span>
+                <span class="copy-hint" data-i18n="hint_click_copy">点击复制</span>
+            </div>
+
+            <!-- URLs Chip Input -->
+            <div class="form-group">
+                <div class="form-header">
+                    <label data-i18n="label_urls">通知地址 URLs (按回车或逗号添加，点击文字修改)</label>
+                    <!-- 右侧示例链接 -->
+                    <a href="https://github.com/caronc/apprise/wiki" target="_blank" class="help-link">
+                        <span data-i18n="link_examples">查看示例</span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"
+                            stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                        </svg>
+                    </a>
+                </div>
+                <div class="chip-container" id="urlContainer">
+                    <input type="text" class="chip-input" id="urlInput" data-i18n-placeholder="placeholder_urls"
+                        placeholder="tgram://..., mailto://..." autocomplete="off">
+                </div>
+            </div>
+
+            <!-- Row: Type & Format -->
+            <div class="grid-row form-group">
+
+                <!-- Custom Type Select -->
+                <div class="custom-select-wrapper">
+                    <label data-i18n="label_type">类型 Type</label>
+                    <div class="custom-select-trigger" id="typeTrigger">
+                        <div class="custom-select-value" id="typeDisplay"></div>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </div>
+                    <div class="custom-options" id="typeOptions">
+                        <!-- Options populated by JS -->
+                    </div>
+                    <input type="hidden" id="type" value="info">
+                </div>
+
+                <div class="custom-select-wrapper">
+                    <label data-i18n="label_format">格式 Format</label>
+                    <div class="custom-select-trigger" id="formatTrigger">
+                        <div class="custom-select-value" id="formatDisplay"></div>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </div>
+                    <div class="custom-options" id="formatOptions">
+                        <!-- Options populated by JS -->
+                    </div>
+                    <input type="hidden" id="format" value="text">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label data-i18n="label_title">标题 Title</label>
+                <input id="title" class="input-std" data-i18n-placeholder="placeholder_title"
+                    placeholder="Apprise Notification">
+            </div>
+
+            <div class="form-group-fill">
+                <label data-i18n="label_body">内容 Body</label>
+                <textarea id="body" class="input-std-fill" data-i18n-placeholder="placeholder_body"
+                    placeholder="Test notification from Apprise Console"></textarea>
+            </div>
+
+            <div class="actions-row">
+                <button id="sendBtn" class="btn btn-primary">
+                    <span class="spinner"></span>
+                    <svg viewBox="0 0 24 24">
+                        <path d="M22 2L11 13" />
+                        <path d="M22 2L15 22L11 13L2 9L22 2Z" />
+                    </svg>
+                    <span data-i18n="btn_send">发送通知</span>
+                </button>
+                <button id="copyBtn" class="btn btn-secondary">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+                        <rect x="8" y="2" width="8" height="4" rx="1" ry="1" />
+                    </svg>
+                    <span data-i18n="btn_curl">cURL</span>
+                    <!-- 悬停提示语 -->
+                    <span class="copy-hint" data-i18n="hint_click_copy">点击复制</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Right Panel -->
+        <div class="panel-right">
+            <div class="panel-header">
+                <span data-i18n="header_response">响应结果 Response</span>
+            </div>
+            <div id="resultArea">Waiting...</div>
+
+            <div class="panel-header" style="border-top: 1px solid var(--border); padding-top: 20px; margin-top: 0;">
+                <span data-i18n="header_history">历史记录 History</span>
+                <button class="btn-text-danger" id="clearHistoryBtn" data-i18n="btn_clear">清空</button>
+            </div>
+
+            <div class="scroll-area">
+                <div id="historyList" class="history-list"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 引用 JS -->
+    <script src="script.js"></script>
+</body>
+
+</html>
