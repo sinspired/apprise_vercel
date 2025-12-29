@@ -349,11 +349,16 @@
       }
       .api-display-box{
         padding: 10px 6px;
+        /* position: relative; */
       }
 
-      .copy-hint {
-        top: 14px;transform: translateY(0%);
+      .api-display-box .copy-hint {
+        right: 6px;
+        top: auto;
+        bottom: 10px; /* = line-height / 2 */
+        transform: none;
       }
+
       textarea.input-std-fill { height: 180px; }
       .actions-row { grid-template-columns: 1fr 1fr; }
     }
@@ -752,7 +757,7 @@
         this.urlInput = new ChipInput('urlContainer', 'urlInput', 'apprise_urls');
         
         // Auto API URL
-        const apiUrl = window.location.protocol.startsWith('http') ? window.location.origin + '/notify' : 'http://host:port/notify';
+        const apiUrl = window.location.protocol.startsWith('http') ? window.location.origin + '/notify' : 'http://host.asdsadadsasdasdadadasdsad.asdads.d.ad.a:port/notify';
         document.getElementById('apiUrlText').innerText = apiUrl;
 
         // Restore Inputs
