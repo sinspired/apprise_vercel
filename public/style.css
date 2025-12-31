@@ -342,14 +342,14 @@ label {
   font-size: 0.85rem;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   max-width: 100%;
   border: 1px solid transparent;
 }
 
 .chip svg {
-  width: 14px;
-  height: 14px;
+  width: 16px;
+  height: 16px;
   opacity: 0.7;
   flex-shrink: 0;
 }
@@ -363,8 +363,9 @@ label {
   cursor: text;
   outline: none;
   border-radius: 2px;
-  padding: 0 2px;
+  padding: 2px 4px 4px 2px;
   transition: all 0.2s;
+  line-height: 1;
 }
 
 .chip-text:hover {
@@ -384,8 +385,9 @@ label {
   cursor: pointer;
   opacity: 0.5;
   font-weight: bold;
-  padding: 0 2px;
+  padding: 0px 2px 2px 4px;
   flex-shrink: 0;
+  user-select: none;
 }
 
 .chip-close:hover {
