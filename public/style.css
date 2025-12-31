@@ -5,6 +5,7 @@
   --text-sub: #86868b;
   --border: #d2d2d7;
   --focus-ring: #0071e3;
+  --focus-muted: #d4d4d4;
   --help-link: #0ab5ff80;
   --danger: #ff3b30;
   --success: #34c759;
@@ -25,6 +26,7 @@ html[data-theme='dark'] {
   --border: #424245;
   --tag-bg: #3a3f55;
   --focus-ring: #0a84ff;
+  --focus-muted: #202020;
   --help-link: #0164c7ca;
   --code-bg: #1c1c1e;
 }
@@ -327,7 +329,7 @@ label {
 
 .chip-container:focus-within {
   border-color: var(--focus-ring);
-  box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.2);
+  box-shadow: 0 0 0 1px rgba(0, 113, 227, 0.2);
 }
 
 #urlContainer {
@@ -375,7 +377,8 @@ label {
 .chip-text:focus {
   background: var(--card-bg);
   color: var(--text-main);
-  box-shadow: 0 0 0 2px var(--focus-ring);
+  box-shadow: 0 0 0px 1px var(--focus-muted);
+  border-radius: 4px;
   white-space: pre-wrap;
   word-break: break-all;
   overflow: visible;
