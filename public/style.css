@@ -772,7 +772,7 @@ textarea.input-std-fill:focus {
   }
 
   /* 通知 URL */
-  .chip {
+  .chip-text {
     font-size: 1rem !important;
   }
 

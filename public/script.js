@@ -229,6 +229,11 @@ class ChipInput {
             span.innerText = text;
             span.contentEditable = true;
 
+            // 禁用拼写检查、自动更正、自动大写（iOS/Android/桌面全兼容）
+            span.setAttribute('spellcheck', 'false');
+            span.setAttribute('autocorrect', 'off');
+            span.setAttribute('autocapitalize', 'off');
+
             span.onkeydown = (e) => {
                 if (e.key === 'Enter') {
                     e.preventDefault();
@@ -271,7 +276,7 @@ const app = {
         this.urlInput = new ChipInput('urlContainer', 'urlInput', 'apprise_urls');
 
         // Auto API URL
-        const apiUrl = window.location.protocol.startsWith('http') ? window.location.origin + '/notify' : 'http://host.asdsadadsasdasdadadasdsad.asdads.d.ad.a:port/notify';
+        const apiUrl = window.location.protocol.startsWith('http') ? window.location.origin + '/notify' : 'http://host:port/notify';
         document.getElementById('apiUrlText').innerText = apiUrl;
 
         // Restore Inputs
