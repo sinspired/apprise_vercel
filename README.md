@@ -2,35 +2,32 @@
 
 # 📢 Apprise Vercel Notify
 
-**无服务器极简通知服务**
+**无服务器极简通知服务**  
 </br>
-支持向 Telegram、Email、钉钉、企业微信 等 100+ 目标发送通知。
-
 ![Apprise](https://img.shields.io/badge/Apprise-1.9.6-00A98F)
-![Runtime](https://img.shields.io/badge/Runtime-Vercel%20Serverless-000000?logo=vercel&logoColor=white)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE)
 ![Python](https://img.shields.io/badge/Python-3.x-3776AB?logo=python&logoColor=white)
 
 </div>
 </br>
 
+> [!NOTE]
+> Apprise Vercel 是一个**无服务器极简通知服务**，它的主要设计目的是消除不同通知服务之间使用上的不一致性。通过利用一个简单的 URL 字符串，你可以向 Telegram、Email、钉钉、企业微信 等 `100+` 目标发送通知。
+
 ## 🛠️ 部署
 
-点击下方按钮，一键部署到你的 `Vercel` 账户
+点击下方按钮，一键部署到你的 `Vercel` 账户：
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/sinspired/apprise_vercel)
 
-> [!TIP]
-> 直接访问 `https://your-project.vercel.app` 可在前端页面测试 `API` 和 `通知目标`。
-
-1. **获取域名**: 部署完成自动分配（如 `https://your-project.vercel.app`）；
-2. **API 地址**：`https://your-project.vercel.app/notify`；
-3. **添加域名**: 进入project，点击 `setting` -> `domains` -> `add domain`；
-4. **验证域名**: 根据提示添加 `cname` 记录 和 `txt` 记录（可选）
+> [!TIP]  
+> 部署完成后访问 `https://your-project.vercel.app` 可在前端页面测试 `API` 和通知目标。
 
 ## 🔔 通知渠道
 
-支持 `100+` 通知渠道，完整列表请查阅 [Apprise 官方 Wiki]([https://](https://github.com/caronc/apprise/wiki))
+支持 `100+` 通知渠道，完整列表请查阅 [Apprise 官方 Wiki](https://github.com/caronc/apprise/wiki)。
+
+常用渠道示例：
 
 - Telegram: `tgram://BOT_TOKEN/CHAT_ID`
 - Discord: `discord://WEBHOOK_ID/WEBHOOK_TOKEN`
@@ -38,24 +35,24 @@
 - 邮件 (Email): `mailto://user:pass@smtp.example.com:587`
 - Bark (iOS): `bark://DEVICE_KEY`
 - 企业微信 (WeCom): `wecombot://{botkey}`
-  
+
+### [⚡️1分钟搞定常用通知渠道](https://github.com/sinspired/apprise_vercel/wiki/QuicSet)
+
 ## 🤖 API 调用
 
-可以从任何支持 HTTP 请求的程序或脚本中调用此服务。
-
-- **请求方式**: `POST`
-- **接口路径**: `/notify`
+- **请求方式**: `POST`  
+- **接口路径**: `/notify`  
 - **Content-Type**: `application/json`
 
 ### 请求参数 (JSON)
 
-| 字段 | 类型 | 说明 |
-| :--- | :--- | :--- |
-| `urls` | String | Apprise URL，多个 URL 用逗号 `,` 分隔 |
-| `title` | String | 通知的标题 |
-| `body` | String  | 通知的具体内容 |
+| 字段   | 类型   | 说明 |
+|--------|--------|------|
+| `urls` | String | Apprise URL，多个 URL 用逗号分隔 |
+| `title`| String | 通知标题 |
+| `body` | String | 通知内容 |
 | `type` | String | 通知类型：`info`, `success`, `warning`, `error` |
-| `format`| String | 内容格式：`text`, `markdown`, `html` |
+| `format`| String| 内容格式：`text`, `markdown`, `html` |
 
 ### 调用示例
 
@@ -74,7 +71,7 @@ Invoke-RestMethod -Method Post -Uri "https://您的域名/notify" -ContentType "
 
 #### cURL (Linux/macOS)
 
-```Bash
+```bash
 curl -X POST "https://您的域名/notify" \
   -H "Content-Type: application/json" \
   -d '{
