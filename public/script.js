@@ -591,8 +591,8 @@ const app = {
             urls: this.urlInput.getValue(),
             type: typeVal,
             format: document.getElementById('format').value,
-            title: rawTitle.trim() || "Apprise Notification",
-            body: rawBody.trim() || "Test notification from Apprise Console"
+            title: rawTitle.trim() || defaultTitle,
+            body: rawBody.trim() || defaultBody
         };
 
         if (!payload.urls) {
