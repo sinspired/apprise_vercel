@@ -760,10 +760,6 @@ textarea.input-std-fill:focus {
   header {
     padding: 0 12px;
   }
-  .site-logo {
-    height: 20px;
-    margin-top: 4px;
-  }
 
   .header-right {
     gap: 0px;
