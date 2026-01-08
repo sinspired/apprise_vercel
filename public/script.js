@@ -10,7 +10,7 @@ if ('serviceWorker' in navigator) {
 // --- 国际化配置 (I18N) ---
 const TRANSLATIONS = {
     "zh-CN": {
-        app_title: "📢 Apprise 通知",
+        app_title: "Apprise 通知",
         lang_switch_title: "切换语言",
         theme_switch_title: "切换主题",
         hint_copy_api: "点击复制 API 地址",
@@ -38,7 +38,7 @@ const TRANSLATIONS = {
         opt_error: "Error"
     },
     "en": {
-        app_title: "📢 Apprise Notify",
+        app_title: "Apprise Notify",
         lang_switch_title: "Switch Language",
         theme_switch_title: "Switch Theme",
         hint_copy_api: "Click to copy API URL",
@@ -66,7 +66,7 @@ const TRANSLATIONS = {
         opt_error: "Error"
     },
     "ja": {
-        app_title: "📢 Apprise 通知",
+        app_title: "Apprise 通知",
         lang_switch_title: "言語切替",
         hint_copy_api: "クリックしてAPI URLをコピー",
         hint_click_copy: "コピー",

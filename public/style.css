@@ -63,10 +63,19 @@ header {
   transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
-header h1 {
-  margin: 0;
-  font-size: 1.2rem;
-  font-weight: 600;
+.header-left {
+  display: flex;
+  align-items: center; /* 垂直居中 */
+  gap: 0.4em; /* 图标与文字间距 */
+}
+
+.header-left h1 {
+  font-size: 1.4rem; /* 根据需要调整大小 */
+}
+
+.site-logo {
+  height: 20px; 
+  margin-top: 5px;
 }
 
 .header-right {
@@ -780,8 +789,6 @@ textarea.input-std-fill:focus {
   .chip-text {
     font-size: 1rem !important;
   }
-
-
 
   .form-group-fill {
     min-height: 140px;
