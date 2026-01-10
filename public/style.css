@@ -2,7 +2,7 @@
   --bg: #f5f5f7;
   --card-bg: #ffffff;
   --text-main: #1d1d1f;
-  --text-sub: #86868b;
+  --text-sub: #4e4e4e;
   --border: #d2d2d7;
   --focus-ring: #0071e3;
   --focus-muted: #d4d4d4;
@@ -22,7 +22,7 @@ html[data-theme='dark'] {
   --bg: #000000;
   --card-bg: #1c1c1e;
   --text-main: #f5f5f7;
-  --text-sub: #86868b;
+  --text-sub: #d3d3d3;
   --border: #424245;
   --tag-bg: #3a3f55;
   --focus-ring: #0a84ff;
@@ -628,7 +628,7 @@ textarea.input-std-fill:focus {
 /* Right Panel */
 .panel-header {
   padding: 0 0 16px 0;
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px dashed var(--border);
   font-weight: 600;
   color: var(--text-sub);
   font-size: 0.9rem;
