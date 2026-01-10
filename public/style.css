@@ -123,7 +123,7 @@ header {
   top: 120%;
   right: 0;
   left: auto;
-  min-width: 140px;
+  min-width: 110px;
   background: var(--card-bg);
   border: 1px solid var(--border);
   border-radius: var(--radius);
@@ -138,7 +138,7 @@ header {
   animation: fadeIn 0.1s ease;
 }
 
-.header-options .custom-option {
+.header-options .language {
   justify-content: space-between;
 }
 
