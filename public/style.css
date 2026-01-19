@@ -217,6 +217,40 @@ header {
   flex-shrink: 0;
 }
 
+/* 容器布局，让标签和按钮对齐 */
+.label_wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+/* 重置按钮样式 */
+.btn-reset {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--border);
+    padding: 4px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+/* 鼠标悬停效果 */
+.btn-reset:hover {
+    color: #dc3545; /* 悬停变红，提示这是一个清除操作 */
+    transition: all 0.5s ease;
+}
+
+/* 包含 SVG 的样式调整 */
+.btn-reset svg {
+    width: 16px;
+    height: 16px;
+}
+
 label {
   display: block;
   font-size: 0.8rem;

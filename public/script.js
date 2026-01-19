@@ -343,6 +343,32 @@ const app = {
             document.getElementById('langOptions').classList.remove('open');
         });
 
+        const bindResetAction = (btnId, inputId) => {
+            const btn = document.getElementById(btnId);
+            const input = document.getElementById(inputId);
+
+            if (btn && input) {
+                btn.addEventListener('click', (e) => {
+                    // 阻止按钮默认行为
+                    e.preventDefault();
+
+                    // 清空输入框
+                    input.value = '';
+
+                    // 触发 input 事件以保存到 localStorage (触发 saveInput)
+                    input.dispatchEvent(new Event('input'));
+
+                    // 重新聚焦到输入框，方便用户直接输入
+                    input.focus();
+                });
+            }
+        };
+
+        // 绑定重置按钮
+        bindResetAction('titleResetTitleBtn', 'title');
+        bindResetAction('bodyResetIconBtn', 'body');
+
+
         this.renderHistory();
     },
 

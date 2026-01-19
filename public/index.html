@@ -151,13 +151,41 @@
             </div>
 
             <div class="form-group">
-                <label data-i18n="label_title">标题 Title</label>
+                <div class="label_wrapper">
+                    <label data-i18n="label_title">标题 Title</label>
+
+                    <button type="button" class="btn-reset" id="titleResetTitleBtn" title="Reset Title"
+                        aria-label="Reset Title">
+                        <!-- Feather Icon: rotate-ccw -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="feather feather-rotate-ccw">
+                            <polyline points="1 4 1 10 7 10"></polyline>
+                            <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+                        </svg>
+                    </button>
+                </div>
+
                 <input id="title" class="input-std" data-i18n-placeholder="placeholder_title"
                     placeholder="Apprise Notification">
             </div>
 
             <div class="form-group-fill">
-                <label data-i18n="label_body">内容 Body</label>
+                <div class="label_wrapper"> 
+                    <label data-i18n="label_body">内容 Body</label>
+
+                    <button type="button" class="btn-reset" id="bodyResetIconBtn" title="Reset Body"
+                        aria-label="Reset Icon URL">
+                        <!-- Feather Icon: rotate-ccw -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="feather feather-rotate-ccw">
+                            <polyline points="1 4 1 10 7 10"></polyline>
+                            <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+                        </svg>
+                    </button>
+                </div>
+                
                 <textarea id="body" class="input-std-fill" data-i18n-placeholder="placeholder_body"
                     placeholder="Test notification from Apprise Console"></textarea>
             </div>
