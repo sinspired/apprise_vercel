@@ -47,6 +47,8 @@ def decorate_url(raw_url, icon_url):
             # Discord Webhook: 需要 avatar=yes 才能生效
             set_if_missing("avatar", "yes")
             set_if_missing("avatar_url", icon_url)
+        elif scheme == "mailto" or scheme == "mailtos":
+            set_if_missing("from", "Apprise_Vercel")
 
         # 重新组装 URL
         new_query = urlencode(query_params, doseq=True)
