@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="generator" content="Docusaurus v3.9.2">
 <title data-rh="true">WeCom (企业微信) | Apprise Vercel</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:image" content="https://sinspired.github.io/apprise_vercel/img/Apprise_OG.png"><meta data-rh="true" name="twitter:image" content="https://sinspired.github.io/apprise_vercel/img/Apprise_OG.png"><meta data-rh="true" property="og:url" content="https://sinspired.github.io/apprise_vercel/docs/WeCom"><meta data-rh="true" property="og:locale" content="zh_Hans"><meta data-rh="true" name="docusaurus_locale" content="zh-Hans"><meta data-rh="true" name="docsearch:language" content="zh-Hans"><meta data-rh="true" name="docusaurus_version" content="current"><meta data-rh="true" name="docusaurus_tag" content="docs-default-current"><meta data-rh="true" name="docsearch:version" content="current"><meta data-rh="true" name="docsearch:docusaurus_tag" content="docs-default-current"><meta data-rh="true" property="og:title" content="WeCom (企业微信) | Apprise Vercel"><meta data-rh="true" name="description" content="[!TIP]"><meta data-rh="true" property="og:description" content="[!TIP]"><link data-rh="true" rel="icon" href="/apprise_vercel/img/favicon.ico"><link data-rh="true" rel="canonical" href="https://sinspired.github.io/apprise_vercel/docs/WeCom"><link data-rh="true" rel="alternate" href="https://sinspired.github.io/apprise_vercel/docs/WeCom" hreflang="zh-Hans"><link data-rh="true" rel="alternate" href="https://sinspired.github.io/apprise_vercel/docs/WeCom" hreflang="x-default"><script data-rh="true" type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"WeCom (企业微信)","item":"https://sinspired.github.io/apprise_vercel/docs/WeCom"}]}</script><link rel="stylesheet" href="/apprise_vercel/assets/css/styles.8b7f734d.css">
-<script src="/apprise_vercel/assets/js/runtime~main.19319bf0.js" defer="defer"></script>
+<script src="/apprise_vercel/assets/js/runtime~main.8700ccf4.js" defer="defer"></script>
 <script src="/apprise_vercel/assets/js/main.e3434c55.js" defer="defer"></script>
 </head>
 <body class="navigation-with-keyboard">
@@ -17,18 +17,47 @@
 <strong>企业微信</strong> 支持通过应用消息接口向成员或群组发送通知。<a href="https://appriseit.com/services/wecombot" target="_blank" rel="noopener noreferrer" class="">ⓘ 查看详细教程</a></p>
 </blockquote>
 <h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="-url-格式">📦 URL 格式<a href="#-url-格式" class="hash-link" aria-label="📦 URL 格式的直接链接" title="📦 URL 格式的直接链接" translate="no">​</a></h2>
-<p><code>wecom://{corp_id}/{agent_id}/{secret}</code></p>
+<p><code>wecombot://{botkey}</code></p>
 <h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="️-快速步骤">⚡️ 快速步骤<a href="#️-快速步骤" class="hash-link" aria-label="⚡️ 快速步骤的直接链接" title="⚡️ 快速步骤的直接链接" translate="no">​</a></h2>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="-pc版wecom">💻 PC版WeCom<a href="#-pc版wecom" class="hash-link" aria-label="💻 PC版WeCom的直接链接" title="💻 PC版WeCom的直接链接" translate="no">​</a></h3>
 <ol>
-<li class="">登录企业微信管理后台，创建一个应用</li>
-<li class="">获取 <code>{corp_id}</code>、<code>{agent_id}</code> 与 <code>{secret}</code></li>
-<li class="">按格式拼接目标 <code>URL</code>，Enjoy! 🎉</li>
+<li class="">在PC版WeCom上，找到目标WeCom组来接收报警通知。</li>
+<li class="">右键点击WeCom组。在弹出的窗口中，点击“添加组机器人”。</li>
+<li class="">在弹出的窗口中，点击创建机器人。</li>
+<li class="">在弹出的窗口中，输入自定义机器人名称并点击添加。</li>
+<li class="">你将获得一个看起来像以下的 Webhook URL：
+<code>https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=abcd</code></li>
+</ol>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="️-wecom-网页版">⚛️ WeCom 网页版<a href="#️-wecom-网页版" class="hash-link" aria-label="⚛️ WeCom 网页版的直接链接" title="⚛️ WeCom 网页版的直接链接" translate="no">​</a></h3>
+<ol>
+<li class="">
+<p>在WebCom for Web中，打开目标WeCom群组以接收报警通知。</p>
+</li>
+<li class="">
+<p>点击右上角的组设置图标。</p>
+</li>
+<li class="">
+<p>在组设置页面，选择“组机器人”&gt;添加机器人。</p>
+</li>
+<li class="">
+<p>在添加机器人管理页面，输入新机器人的自定义名称。</p>
+</li>
+<li class="">
+<p>点击添加</p>
+</li>
+<li class="">
+<p>你将获得一个看起来像以下的Webhook URL：
+<code>https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=abcd</code></p>
+</li>
+<li class="">
+<p>按格式拼接目标 <code>URL</code>，Enjoy! 🎉</p>
+</li>
 </ol>
 <h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="示例">示例<a href="#示例" class="hash-link" aria-label="示例的直接链接" title="示例的直接链接" translate="no">​</a></h3>
-<div class="language-bash codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-bash codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">wecom://ww1234567890abcd/1000002/abcdefghijklmnopqrstuvwx</span><br></span></code></pre></div></div>
+<div class="language-bash codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#393A34;--prism-background-color:#f6f8fa"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-bash codeBlock_bY9V thin-scrollbar" style="color:#393A34;background-color:#f6f8fa"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#393A34"><span class="token plain">wecombot://{botkey}</span><br></span><span class="token-line" style="color:#393A34"><span class="token plain">https://qyapi.weixin.qq.com/cgi-bin/webhook/send?key=abcd</span><br></span></code></pre></div></div>
 <h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="-使用文档">📘 使用文档<a href="#-使用文档" class="hash-link" aria-label="📘 使用文档的直接链接" title="📘 使用文档的直接链接" translate="no">​</a></h2>
 <p><a href="https://developer.work.weixin.qq.com" target="_blank" rel="noopener noreferrer" class="">企业微信文档</a></p>
 <h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="-下载">📥 下载<a href="#-下载" class="hash-link" aria-label="📥 下载的直接链接" title="📥 下载的直接链接" translate="no">​</a></h2>
-<p><a href="https://work.weixin.qq.com" target="_blank" rel="noopener noreferrer" class="">企业微信官网</a></p></div><footer class="theme-doc-footer docusaurus-mt-lg"><div class="row margin-top--sm theme-doc-footer-edit-meta-row"><div class="col noPrint_WFHX"><a href="https://github.com/sinspired/apprise_vercel/wiki/docs/WeCom.md" target="_blank" rel="noopener noreferrer" class="theme-edit-this-page"><svg fill="currentColor" height="20" width="20" viewBox="0 0 40 40" class="iconEdit_Z9Sw" aria-hidden="true"><g><path d="m34.5 11.7l-3 3.1-6.3-6.3 3.1-3q0.5-0.5 1.2-0.5t1.1 0.5l3.9 3.9q0.5 0.4 0.5 1.1t-0.5 1.2z m-29.5 17.1l18.4-18.5 6.3 6.3-18.4 18.4h-6.3v-6.2z"></path></g></svg>编辑此页</a></div><div class="col lastUpdated_JAkA"></div></div></footer></article><nav class="docusaurus-mt-lg pagination-nav" aria-label="文件选项卡"><a class="pagination-nav__link pagination-nav__link--prev" href="/apprise_vercel/docs/DingTalk"><div class="pagination-nav__sublabel">上一页</div><div class="pagination-nav__label">DingTalk (钉钉)</div></a><a class="pagination-nav__link pagination-nav__link--next" href="/apprise_vercel/docs/Discord"><div class="pagination-nav__sublabel">下一页</div><div class="pagination-nav__label">Discord</div></a></nav></div></div><div class="col col--3"><div class="tableOfContents_bqdL thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#-url-格式" class="table-of-contents__link toc-highlight">📦 URL 格式</a></li><li><a href="#️-快速步骤" class="table-of-contents__link toc-highlight">⚡️ 快速步骤</a><ul><li><a href="#示例" class="table-of-contents__link toc-highlight">示例</a></li></ul></li><li><a href="#-使用文档" class="table-of-contents__link toc-highlight">📘 使用文档</a></li><li><a href="#-下载" class="table-of-contents__link toc-highlight">📥 下载</a></li></ul></div></div></div></div></main></div></div></div><footer class="theme-layout-footer footer"><div class="container container-fluid"><div class="footer__bottom text--center"><div class="footer__copyright">Made by <a href="https://github.com/sinspired/apprise_vercel" target="_blank" rel="noopener noreferrer">sinspired</a> · © 2026 Apprise Vercel</div></div></div></footer></div>
+<p><a href="https://work.weixin.qq.com" target="_blank" rel="noopener noreferrer" class="">企业微信官网</a></p></div><footer class="theme-doc-footer docusaurus-mt-lg"><div class="row margin-top--sm theme-doc-footer-edit-meta-row"><div class="col noPrint_WFHX"><a href="https://github.com/sinspired/apprise_vercel/wiki/docs/WeCom.md" target="_blank" rel="noopener noreferrer" class="theme-edit-this-page"><svg fill="currentColor" height="20" width="20" viewBox="0 0 40 40" class="iconEdit_Z9Sw" aria-hidden="true"><g><path d="m34.5 11.7l-3 3.1-6.3-6.3 3.1-3q0.5-0.5 1.2-0.5t1.1 0.5l3.9 3.9q0.5 0.4 0.5 1.1t-0.5 1.2z m-29.5 17.1l18.4-18.5 6.3 6.3-18.4 18.4h-6.3v-6.2z"></path></g></svg>编辑此页</a></div><div class="col lastUpdated_JAkA"></div></div></footer></article><nav class="docusaurus-mt-lg pagination-nav" aria-label="文件选项卡"><a class="pagination-nav__link pagination-nav__link--prev" href="/apprise_vercel/docs/DingTalk"><div class="pagination-nav__sublabel">上一页</div><div class="pagination-nav__label">DingTalk (钉钉)</div></a><a class="pagination-nav__link pagination-nav__link--next" href="/apprise_vercel/docs/Discord"><div class="pagination-nav__sublabel">下一页</div><div class="pagination-nav__label">Discord</div></a></nav></div></div><div class="col col--3"><div class="tableOfContents_bqdL thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#-url-格式" class="table-of-contents__link toc-highlight">📦 URL 格式</a></li><li><a href="#️-快速步骤" class="table-of-contents__link toc-highlight">⚡️ 快速步骤</a><ul><li><a href="#-pc版wecom" class="table-of-contents__link toc-highlight">💻 PC版WeCom</a></li><li><a href="#️-wecom-网页版" class="table-of-contents__link toc-highlight">⚛️ WeCom 网页版</a></li><li><a href="#示例" class="table-of-contents__link toc-highlight">示例</a></li></ul></li><li><a href="#-使用文档" class="table-of-contents__link toc-highlight">📘 使用文档</a></li><li><a href="#-下载" class="table-of-contents__link toc-highlight">📥 下载</a></li></ul></div></div></div></div></main></div></div></div><footer class="theme-layout-footer footer"><div class="container container-fluid"><div class="footer__bottom text--center"><div class="footer__copyright">Made by <a href="https://github.com/sinspired/apprise_vercel" target="_blank" rel="noopener noreferrer">sinspired</a> · © 2026 Apprise Vercel</div></div></div></footer></div>
 </body>
 </html>
