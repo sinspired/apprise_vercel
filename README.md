@@ -23,6 +23,11 @@
 > [!TIP]  
 > 部署完成后访问 `https://your-project.vercel.app` 可在前端页面测试 `API` 和通知目标。
 
+<div align="center">
+  <img src="./public/static/Apprise_OG.png" alt="App Screenshot" width="800" style="border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+  <br>
+</div>
+
 ## 🔔 通知渠道
 
 支持 `100+` 通知渠道，完整列表请查阅 [Apprise 官方文档](https://appriseit.com/services)。
