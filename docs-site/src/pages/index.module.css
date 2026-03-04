@@ -1,0 +1,64 @@
+/* 核心布局：在大屏下强制占满剩余高度并居中 */
+.homeWrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  /* 减去导航栏大概高度，确保在大屏不出现滚动条 */
+  min-height: calc(100vh - 60px - 80px); 
+  width: 100%;
+}
+
+.mainContent {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+.heroContainer {
+  text-align: center;
+  margin-bottom: 3rem; /* 拉近与卡片的距离 */
+}
+
+.title {
+  font-size: 3rem; /* 稍微加大标题 */
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  margin-bottom: 0.75rem;
+  color: var(--feather-text);
+}
+
+.subtitle {
+  font-size: 1.125rem;
+  color: var(--feather-text-dim);
+  line-height: 1.5;
+  margin: 0 auto 2rem;
+  max-width: 500px;
+}
+
+.actions {
+  display: flex;
+  justify-content: center;
+}
+
+.primaryBtn {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.75rem 2rem;
+  border-radius: 99px; /* 全圆角胶囊样式，更现代 */
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1rem;
+  border: 1px solid var(--feather-border);
+  background: var(--feather-text); /* 反转色：黑底白字 */
+  color: var(--feather-bg);
+  transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.primaryBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  color: var(--feather-bg);
+  text-decoration: none;
+  opacity: 0.9;
+}

@@ -1,0 +1,92 @@
+.features {
+  width: 100%;
+}
+
+.grid {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: 1fr;
+}
+
+/* 大屏下严格三等分 */
+@media (min-width: 768px) {
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  background: var(--feather-bg);
+  border: 1px solid var(--feather-border);
+  border-radius: 16px; /* 更大的圆角，更柔和 */
+  padding: 1.5rem;
+  transition: all 0.2s ease;
+  height: 100%;
+}
+
+.card:hover {
+  border-color: var(--feather-border-strong);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.04);
+  transform: translateY(-2px);
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+/* 图标容器：增加淡色背景，显得更精致 */
+.iconWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background-color: var(--feather-bg-accent); /* 需要在 custom.css 定义或用透明色 */
+  color: var(--feather-text);
+  border: 1px solid var(--feather-border);
+}
+
+.cardTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0;
+  color: var(--feather-text);
+}
+
+.cardDesc {
+  flex-grow: 1;
+  font-size: 0.9rem;
+  color: var(--feather-text-dim);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.cardLink {
+  margin-top: 1.25rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--feather-text-dim);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: color 0.2s;
+}
+
+.cardLink:hover {
+  color: var(--ifm-color-primary);
+  text-decoration: none;
+}
+
+.arrow {
+  transition: transform 0.2s;
+}
+.cardLink:hover .arrow {
+  transform: translateX(3px);
+}

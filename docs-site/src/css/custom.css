@@ -1,0 +1,129 @@
+:root {
+  --feather-text: #111111;
+  --feather-text-dim: #666666;
+  --feather-bg: #ffffff;
+  --feather-bg-accent: #f5f5f7; /* 卡片图标的淡背景 */
+  --feather-border: #eaeaea;
+  --feather-border-strong: #d1d1d1;
+
+  --ifm-color-primary: #000000; /* 主色调改为黑色，符合极简风格 */
+}
+
+html[data-theme='dark'] {
+  --feather-text: #eeeeee;
+  --feather-text-dim: #888888;
+  --feather-bg: #0a0a0a;
+  --feather-bg-accent: #1c1c1c;
+  --feather-border: #333333;
+  --feather-border-strong: #555555;
+
+  --ifm-color-primary: #ffffff;
+}
+
+/* 通用图标样式 */
+.sidebar-icon .menu__link {
+  display: flex;
+  align-items: center;
+}
+
+.sidebar-icon .menu__link::before {
+  content: '';
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  margin-right: 6px;
+
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  -webkit-mask-size: contain;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: contain;
+
+  background-color: currentColor; /* 跟随文字颜色，深浅模式自动适配 */
+  opacity: 0.7;                   /* 不太显眼 */
+}
+
+/* 针对不同文档/分组指定图标 */
+.sidebar-icon-home .menu__link::before {
+  -webkit-mask-image: url('/img/icons/home.svg');
+  mask-image: url('/img/icons/home.svg');
+}
+
+.sidebar-icon-setup .menu__link::before {
+  -webkit-mask-image: url('/img/icons/setup.svg');
+  mask-image: url('/img/icons/setup.svg');
+}
+
+.sidebar-icon-deploy .menu__link::before {
+  -webkit-mask-image: url('/img/icons/deploy.svg');
+  mask-image: url('/img/icons/deploy.svg');
+}
+
+.sidebar-icon-api .menu__link::before {
+  -webkit-mask-image: url('/img/icons/api.svg');
+  mask-image: url('/img/icons/api.svg');
+}
+
+/* 已有的分组图标 */
+.sidebar-icon-phone .menu__link::before {
+  -webkit-mask-image: url('/img/icons/phone.svg');
+  mask-image: url('/img/icons/phone.svg');
+}
+.sidebar-icon-email .menu__link::before {
+  -webkit-mask-image: url('/img/icons/email.svg');
+  mask-image: url('/img/icons/email.svg');
+}
+.sidebar-icon-chat .menu__link::before {
+  -webkit-mask-image: url('/img/icons/chat.svg');
+  mask-image: url('/img/icons/chat.svg');
+}
+
+
+
+/* 覆盖 Docusaurus 默认页脚样式 */
+.footer {
+  background: transparent !important;
+  box-shadow: none;
+  border-top: none; /* 移除页脚顶部分割线，让它看起来是悬浮的或页面的一部分 */
+  padding: 1rem 0 2rem;
+  text-align: center;
+}
+
+.footer__copyright {
+  font-size: 0.8rem;
+  color: var(--feather-text-dim);
+  opacity: 0.6;
+}
+
+/* 调整导航栏底部边框，使其更轻 */
+.navbar {
+  border-bottom: 1px solid var(--feather-border);
+  box-shadow: none;
+}
+
+.header-github-link::before {
+  content: '';
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  vertical-align: middle;
+
+  /* 使用 mask 技术，让图标跟随文字颜色 */
+  background-color: currentColor;
+  -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='black' d='M12 .5C5.65.5.5 5.65.5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.3.8-.6v-2.1c-3.2.7-3.9-1.5-3.9-1.5-.5-1.2-1.2-1.5-1.2-1.5-1-.7.1-.7.1-.7 1.1.1 1.7 1.1 1.7 1.1 1 .1.6 1.7 2.9 1.2.1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.9 0-1.3.5-2.4 1.2-3.3-.1-.3-.5-1.6.1-3.3 0 0 1-.3 3.4 1.2a11.7 11.7 0 0 1 6.2 0c2.4-1.5 3.4-1.2 3.4-1.2.6 1.7.2 3 .1 3.3.8.9 1.2 2 1.2 3.3 0 4.6-2.7 5.6-5.3 5.9.4.3.8 1 .8 2.1v3.1c0 .3.2.7.8.6A11.5 11.5 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z'/></svg>")
+    no-repeat center;
+  -webkit-mask-size: cover;
+  mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='black' d='M12 .5C5.65.5.5 5.65.5 12c0 5.1 3.3 9.4 7.9 10.9.6.1.8-.3.8-.6v-2.1c-3.2.7-3.9-1.5-3.9-1.5-.5-1.2-1.2-1.5-1.2-1.5-1-.7.1-.7.1-.7 1.1.1 1.7 1.1 1.7 1.1 1 .1.6 1.7 2.9 1.2.1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.9 0-1.3.5-2.4 1.2-3.3-.1-.3-.5-1.6.1-3.3 0 0 1-.3 3.4 1.2a11.7 11.7 0 0 1 6.2 0c2.4-1.5 3.4-1.2 3.4-1.2.6 1.7.2 3 .1 3.3.8.9 1.2 2 1.2 3.3 0 4.6-2.7 5.6-5.3 5.9.4.3.8 1 .8 2.1v3.1c0 .3.2.7.8.6A11.5 11.5 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z'/></svg>")
+    no-repeat center;
+  mask-size: cover;
+}
+
+/* hover 效果：根据主题变色 */
+html[data-theme='light'] .header-github-link:hover::before {
+  background-color: #000; /* 浅色主题下变深 */
+}
+
+html[data-theme='dark'] .header-github-link:hover::before {
+  background-color: #fff; /* 深色主题下变亮 */
+}
