@@ -1,0 +1,6 @@
+version: 2
+updates:
+  - package-ecosystem: "pip"
+    directory: "/api"
+    schedule:
+      interval: "daily" # 每天检查一次更新，也可以改为 "weekly" (每周)
