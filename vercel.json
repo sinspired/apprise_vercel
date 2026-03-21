@@ -1,13 +1,8 @@
 {
-  "functions": {
-    "api/notify.py": {
-      "excludeFiles": "docs-site/**"
-    }
-  },
   "rewrites": [
     {
       "source": "/notify",
-      "destination": "/api/notify"
+      "destination": "/api/index"
     }
   ]
 }

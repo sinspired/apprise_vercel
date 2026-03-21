@@ -1,10 +1,13 @@
+from flask import Flask
 from http.server import BaseHTTPRequestHandler
 import json
 import apprise
 from urllib.parse import urlparse, parse_qs, urlencode, urlunparse
 
-# 默认图标
+
 DEFAULT_ICON = "https://apprise.linkpc.dpdns.org/static/icons/icon-512.png"
+
+app = Flask(__name__)
 
 
 def decorate_url(raw_url, icon_url):
