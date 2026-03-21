@@ -4,3 +4,5 @@ updates:
     directory: "/api"
     schedule:
       interval: "daily" # 每天检查一次更新，也可以改为 "weekly" (每周)
+      time: "12:10"
+      timezone: "Asia/Shanghai"
