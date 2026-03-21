@@ -20,7 +20,7 @@ export default function Home(): ReactNode {
             </p>
 
             <div className={styles.actions}>
-              <Link className={styles.primaryBtn} to="/docs/QuicSet">
+              <Link className={styles.primaryBtn} to="QuicSet">
                 快速开始
               </Link>
             </div>

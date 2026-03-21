@@ -26,7 +26,10 @@ const TRANSLATIONS = {
         opt_info: "Info",
         opt_success: "Success",
         opt_warning: "Warning",
-        opt_error: "Error"
+        opt_error: "Error",
+        nav_docs: "文档",
+        nav_api: "API",
+
     },
     "en": {
         app_title: "Apprise Notify",
@@ -54,7 +57,9 @@ const TRANSLATIONS = {
         opt_info: "Info",
         opt_success: "Success",
         opt_warning: "Warning",
-        opt_error: "Error"
+        opt_error: "Error",
+        nav_docs: "Docs",
+        nav_api: "API",
     },
     "ja": {
         app_title: "Apprise 通知",
@@ -81,7 +86,9 @@ const TRANSLATIONS = {
         opt_info: "Info",
         opt_success: "Success",
         opt_warning: "Warning",
-        opt_error: "Error"
+        opt_error: "Error",
+        nav_docs: "Docs",
+        nav_api: "API",
     }
 };
 

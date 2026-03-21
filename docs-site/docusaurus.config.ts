@@ -10,7 +10,7 @@ const getBaseUrl = () => {
   // docs-site 单独部署，挂在根路径
   if (process.env.VERCEL) return '/';
 
-  // 3. 本地开发或通过 pnpm run deploy 部署到 GitHub Pages
+  // 本地开发 & GitHub Pages deploy
   return '/apprise_vercel';
 };
 
@@ -20,9 +20,6 @@ const config: Config = {
   favicon: 'img/favicon.ico',
 
   future: { v4: true },
-
-
-
 
   url: 'https://sinspired.github.io',
   // 动态判断路径
@@ -42,13 +39,21 @@ const config: Config = {
     locales: ['zh-Hans'],
   },
 
+  customFields: {
+    // 综合站：API 路由在同域，用相对路径
+    // 独立站 / gh-pages：API 在 Vercel 综合站，需要完整 URL
+    apiDocsUrl: process.env.IS_COMBINED_SITE === 'true'
+      ? '/open-api'
+      : (process.env.API_DOCS_URL ?? 'https://apprise.linkpc.dpdns.org/open-api'),
+  },
+
   presets: [
     [
       'classic',
       {
         docs: {
           sidebarPath: './sidebars.ts',
-          // 关键优化：将文档路由设为根，避免出现 /docs/docs/xxx
+          // 将文档路由设为根，避免出现 /docs/docs/xxx
           routeBasePath: '/',
           editUrl: 'https://github.com/sinspired/apprise_vercel/wiki/',
         },
@@ -67,7 +72,20 @@ const config: Config = {
       title: 'Apprise Vercel',
       logo: { alt: 'Apprise Vercel Logo', src: 'img/logo.svg' },
       items: [
-        { type: 'docSidebar', sidebarId: 'mainSidebar', position: 'left', label: '文档' },
+        {
+          type: 'docSidebar',
+          sidebarId: 'mainSidebar',
+          position: 'left',
+          label: '文档',
+        },
+        {
+          href: process.env.IS_COMBINED_SITE === 'true'
+            ? '/api-reference'
+            : (process.env.API_DOCS_URL ?? 'https://apprise.linkpc.dpdns.org/open-api'),
+          position: 'left',
+          label: 'API',
+          target: process.env.IS_COMBINED_SITE === 'true' ? '_self' : '_blank',
+        },
         {
           href: 'https://github.com/sinspired/apprise_vercel',
           position: 'right',

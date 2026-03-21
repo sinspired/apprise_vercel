@@ -147,18 +147,59 @@ _SCALAR_HTML = """\
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Apprise Notify API · Docs</title>
+  <link rel="icon" href="/static/icons/icon-512.png" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    /* Scalar 滚动条 —— 对齐紫粉主题 */
+    *, *::before, *::after {
+      scrollbar-width: thin;
+      scrollbar-color: rgba(192, 132, 252, 0.4) transparent;
+    }
+    *::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    *::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    *::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, #c084fc, #e879f9);
+      border-radius: 999px;
+    }
+    *::-webkit-scrollbar-thumb:hover {
+      background: linear-gradient(180deg, #a855f7, #d946ef);
+    }
+    #topnav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 9999;
+      display: flex; align-items: center; gap: 8px;
+      padding: 0 20px; height: 44px;
+      background: #13111a;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      font-family: Inter, system-ui, sans-serif;
+      font-size: 13px;
+    }
+    #topnav a {
+      color: rgba(255,255,255,0.55);
+      text-decoration: none;
+      padding: 4px 10px;
+      border-radius: 6px;
+      transition: background 0.15s, color 0.15s;
+    }
+    #topnav a:hover { background: rgba(255,255,255,0.08); color: #fff; }
+    #topnav a.active { background: rgba(139,92,246,0.2); color: #a78bfa; }
+    #topnav .sep { color: rgba(255,255,255,0.15); }
+    #topnav .logo { color: #fff; font-weight: 600; margin-right: 8px; text-decoration: none; cursor: pointer;}
+    /* 给 Scalar 主体留出顶部空间 */
+    body { padding-top: 44px; }
+  </style>
 </head>
 <body>
-  <script src="/i18n.js"></script>
-  <script>
-    (function () {
-      const lang = localStorage.getItem('language') || 'zh-CN';
-      const t = TRANSLATIONS[lang];
-      if (!t) return;
-      document.documentElement.setAttribute('lang', lang);
-      document.title = (t.app_title || 'Apprise Notify') + ' · API Docs';
-    })();
-  </script>
+  <nav id="topnav">
+    <a href="/" class="logo">Apprise Vercel</a>
+    <span class="sep">|</span>
+    <a href="/docs/">文档</a>
+    <a href="/open-api" class="active">API</a>
+  </nav>
 
   <script
     id="api-reference"
@@ -167,18 +208,11 @@ _SCALAR_HTML = """\
       "theme": "purple",
       "layout": "modern",
       "darkMode": true,
-      "hideDarkModeToggle": false,
       "defaultHttpClient": { "targetKey": "shell", "clientKey": "curl" },
       "hideModels": true,
       "hideDownloadButton": true,
       "hideClientButton": false,
-      "metaData": {
-        "title": "Apprise Notify API · Docs",
-        "description": "通过 Apprise 发送推送通知",
-        "ogTitle": "Apprise Notify API"
-      },
-      "withDefaultFonts": true,
-      "favicon": "/static/icons/icon-512.png"
+      "withDefaultFonts": true
     }'
   ></script>
   <script src="https://cdn.jsdelivr.net/npm/@scalar/api-reference"></script>
@@ -253,7 +287,7 @@ def openapi_spec():
     return jsonify(_OPENAPI_SPEC)
 
 
-@app.get("/docs/api")
+@app.get("/open-api")
 def docs():
     """Scalar 文档页面"""
     return Response(_SCALAR_HTML, mimetype="text/html")
@@ -266,7 +300,7 @@ def notify_status():
         {
             "message": "Apprise Vercel Notify is running",
             "usage": "POST /notify  →  JSON { urls, body, title?, type?, format?, icon? }",
-            "docs": "/docs/api",
+            "docs": "/open-api",
             "apprise_version": apprise.__version__,
         }
     )

@@ -50,6 +50,22 @@
         </div>
 
         <div class="header-right">
+            <!-- API -->
+            <!-- <a href="/open-api" class="icon-btn-header" data-i18n-title="nav_api" title="API 文档">
+                <svg viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" width="24" height="24">
+                    <path
+                        d="M469.333333 512l-301.696 301.696-60.330666-60.330667L348.672 512 107.306667 270.634667 167.637333 210.346667 469.290667 512z m0 298.666667h426.666667v85.333333H469.333333v-85.333333z">
+                    </path>
+                </svg>
+            </a> -->
+            <!-- 文档 -->
+            <a href="/docs/" class="icon-btn-header" data-i18n-title="nav_docs" title="文档">
+                <svg viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" width="24" height="24">
+                    <path
+                        d="M960 164.9v639.5l-30.8 34.2H590.6l-54.7 54.7H488l-54.7-54.7H94.8L64 804.4V164.9l30.8-34.2H447l23.9 10.3 41 41 41-41 23.9-10.3H929l30.8 34.2z m-478.8 78.6l-47.9-47.9H129v578h318l20.5 10.3 13.7 10.3V243.5z m417.2-47.8H590.6l-44.5 44.5v550.6l6.8-6.8 23.9-10.3h321.5v-578zM385.5 387.2H190.6v-61.6h194.9v61.6z m0 256.5H190.6v-61.6h194.9v61.6z m-195-126.6h194.9v-65H190.5v65z m643-129.9H642v-61.6h191.5v61.6zM642 517.1h191.5v-65H642v65z m0 126.6h191.5v-61.6H642v61.6z">
+                    </path>
+                </svg>
+            </a>
 
             <!-- Language Dropdown -->
             <div class="header-dropdown-wrapper">
@@ -98,8 +114,7 @@
                 <div class="form-header">
                     <label data-i18n="label_urls">通知地址 URLs (按回车或逗号添加，点击文字修改)</label>
                     <!-- 右侧示例链接 -->
-                    <a href="https://github.com/sinspired/apprise_vercel/wiki/QuicSet" target="_blank" rel="noopener"
-                        class="help-link">
+                    <a href="docs/QuicSet" target="_blank" rel="noopener" class="help-link">
                         <span data-i18n="link_examples">查看示例</span>
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"
                             stroke-linejoin="round">
@@ -217,6 +232,14 @@
         <div class="panel-right">
             <div class="panel-header">
                 <span data-i18n="header_response">响应结果 Response</span>
+                <a href="/open-api" class="btn-text-secondary" data-i18n-title="nav_api" title="API 文档">
+                    <svg id="api-button" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" width="20"
+                        height="20">
+                        <path fill="currentColor"
+                            d="M469.333333 512l-301.696 301.696-60.330666-60.330667L348.672 512 107.306667 270.634667 167.637333 210.346667 469.290667 512z m0 298.666667h426.666667v85.333333H469.333333v-85.333333z">
+                        </path>
+                    </svg>
+                </a>
             </div>
             <div id="resultArea">Waiting...</div>
 

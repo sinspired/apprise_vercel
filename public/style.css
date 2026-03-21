@@ -219,36 +219,36 @@ header {
 
 /* 容器布局，让标签和按钮对齐 */
 .label_wrapper {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
 }
 
 /* 重置按钮样式 */
 .btn-reset {
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    color: var(--border);
-    padding: 4px;
-    border-radius: 4px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s ease;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--border);
+  padding: 4px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
 }
 
 /* 鼠标悬停效果 */
 .btn-reset:hover {
-    color: #dc3545; /* 悬停变红，提示这是一个清除操作 */
-    transition: all 0.5s ease;
+  color: #dc3545; /* 悬停变红，提示这是一个清除操作 */
+  transition: all 0.5s ease;
 }
 
 /* 包含 SVG 的样式调整 */
 .btn-reset svg {
-    width: 16px;
-    height: 16px;
+  width: 16px;
+  height: 16px;
 }
 
 label {
@@ -672,6 +672,26 @@ textarea.input-std-fill:focus {
   margin-bottom: 16px;
 }
 
+/* 仿照 danger 按钮的灰色版本 */
+.btn-text-secondary {
+    background: none;
+    border: none;
+    color: var(--focus-ring);
+    cursor: pointer;
+    font-size: 13px;
+    padding: 4px 8px;
+    text-decoration: none;
+    transition: color 0.2s, opacity 0.2s;
+    display: inline-flex;
+    align-items: center;
+}
+
+.btn-text-secondary:hover {
+    color: rgb(1, 171, 140); /* 灰色 */
+    text-decoration: none;
+    opacity: 0.8;
+}
+
 .btn-text-danger {
   background: none;
   border: none;
@@ -799,6 +819,15 @@ textarea.input-std-fill:focus {
     gap: 0px;
   }
 
+  .icon-btn-header {
+    padding: 7px;
+  }
+
+  .icon-btn-header svg {
+    width: 20px;
+    height: 20px;
+  }
+
   .panel-left,
   .panel-right {
     padding: 12px;
@@ -839,4 +868,8 @@ textarea.input-std-fill:focus {
   .actions-row {
     grid-template-columns: 1fr 1fr;
   }
+}
+
+svg#help-center{
+  stroke-width: 2px;
 }
