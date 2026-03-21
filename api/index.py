@@ -37,7 +37,7 @@ _OPENAPI_SPEC = {
                 },
             },
             "post": {
-                "summary": "发送推送通知",
+                "summary": "发送通知",
                 "operationId": "notify",
                 "requestBody": {
                     "required": True,
