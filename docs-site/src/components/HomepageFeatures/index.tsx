@@ -23,7 +23,7 @@ const FeatureList: FeatureItem[] = [
         无需服务器，点击按钮即可免费部署至 <strong>Vercel</strong>。开箱即用，免去运维烦恼。
       </>
     ),
-    link: 'https://vercel.com/new/clone?repository-url=https://github.com/sinspired/apprise_vercel',
+    link: 'https://vercel.com/new/clone?repository-url=https://github.com/sinspired/apprise_vercel&project-name=apprise-vercel&repository-name=apprise-vercel&demo-title=Apprise%20Vercel%20Notify&demo-description=轻量无服务器消息推送，支持%20Bark、ntfy、Discord%20等%20100%2B%20渠道&demo-url=https://apprise.linkpc.dpdns.org&demo-image=https://apprise.linkpc.dpdns.org/static/Apprise_OG.png&envLink=https://github.com/sinspired/apprise_vercel/wiki/Deploy',
     linkLabel: 'Deploy to Vercel'
   },
   {
