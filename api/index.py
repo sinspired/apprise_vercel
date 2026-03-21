@@ -1,6 +1,5 @@
 # api/index.py
 from flask import Flask, request, jsonify, Response
-from flasgger import Swagger
 import apprise
 from urllib.parse import urlparse, parse_qs, urlencode, urlunparse
 
@@ -16,7 +15,7 @@ _OPENAPI_SPEC = {
     "info": {
         "title": "Apprise Notify API",
         "version": "1.0.0",
-        "description": "Apprise Notify 是一个轻量、快速的消息推送工具，支持 Telegram、Discord、邮件、Webhook 等 100+ 通知方式。",
+        "description": "轻量无服务器消息推送，支持 Bark、ntfy、Discord、Telegram 等 100+ 渠道。",
     },
     "servers": [{"url": "/"}],
     "paths": {
@@ -123,7 +122,6 @@ _OPENAPI_SPEC = {
                     "status": {"type": "string", "example": "OK"},
                     "count": {
                         "type": "integer",
-                        "example": 2,
                         "description": "成功发送的目标数量，多目标时才返回",
                     },
                 },
@@ -140,25 +138,6 @@ _OPENAPI_SPEC = {
         }
     },
 }
-
-# Flasgger 仅用于将 _OPENAPI_SPEC 挂载为 /apispec_1.json，不启用自带 UI
-Swagger(
-    app,
-    template=_OPENAPI_SPEC,
-    config={
-        "headers": [],
-        "specs": [
-            {
-                "endpoint": "apispec_1",
-                "route": "/apispec_1.json",
-                "rule_filter": lambda rule: True,
-                "model_filter": lambda tag: True,
-            }
-        ],
-        "swagger_ui": False,  # UI 由 Scalar 接管
-        "specs_route": "/apidocs/",
-    },
-)
 
 # Scalar 文档页面 HTML
 _SCALAR_HTML = """\
@@ -183,7 +162,7 @@ _SCALAR_HTML = """\
 
   <script
     id="api-reference"
-    data-url="/apispec_1.json"
+    data-url="/openapi.json"
     data-configuration='{
       "theme": "purple",
       "layout": "modern",
@@ -217,15 +196,6 @@ def _parse_url_list(urls_input) -> list[str]:
     if isinstance(urls_input, list):
         return [u.strip() for u in urls_input if isinstance(u, str) and u.strip()]
     return []
-
-
-def _build_apprise(url_list: list[str], icon_url: str) -> tuple[apprise.Apprise, int]:
-    """构建 Apprise 实例，注入图标并添加所有目标 URL，返回 (实例, 成功添加数)"""
-    asset = apprise.AppriseAsset()
-    asset.image_url_logo = icon_url
-    apobj = apprise.Apprise(asset=asset)
-    added = sum(1 for u in url_list if apobj.add(decorate_url(u, icon_url)))
-    return apobj, added
 
 
 def decorate_url(raw_url: str, icon_url: str) -> str:
@@ -265,7 +235,22 @@ def decorate_url(raw_url: str, icon_url: str) -> str:
         return raw_url
 
 
-# 路由
+def _build_apprise(url_list: list[str], icon_url: str) -> tuple[apprise.Apprise, int]:
+    """构建 Apprise 实例，注入图标并添加所有目标 URL，返回 (实例, 成功添加数)"""
+    asset = apprise.AppriseAsset()
+    asset.image_url_logo = icon_url
+    apobj = apprise.Apprise(asset=asset)
+    added = sum(1 for u in url_list if apobj.add(decorate_url(u, icon_url)))
+    return apobj, added
+
+
+# ─── 路由 ─────────────────────────────────────────────────────────────────────
+
+
+@app.get("/openapi.json")
+def openapi_spec():
+    """直接返回 OpenAPI Spec，不依赖任何第三方库"""
+    return jsonify(_OPENAPI_SPEC)
 
 
 @app.get("/docs/api")
@@ -281,7 +266,7 @@ def notify_status():
         {
             "message": "Apprise Vercel Notify is running",
             "usage": "POST /notify  →  JSON { urls, body, title?, type?, format?, icon? }",
-            "docs": "/api/docs",
+            "docs": "/docs/api",
             "apprise_version": apprise.__version__,
         }
     )

@@ -1,17 +1,14 @@
+// docusaurus.config.ts
 import { themes as prismThemes } from 'prism-react-renderer';
 import type { Config } from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
 
 const getBaseUrl = () => {
-  // 1. 如果是从根目录 vercel.json 启动的综合站构建
-  if (process.env.IS_COMBINED_SITE === 'true') {
-    return '/docs/';
-  }
+  // 根目录 vercel.json 构建，文档挂在 /docs/ 子路径
+  if (process.env.IS_COMBINED_SITE === 'true') return '/docs/';
 
-  // 2. 如果是在 Vercel 中直接把 docs-site 设为根目录部署（此时没有 IS_COMBINED_SITE）
-  if (process.env.VERCEL) {
-    return '/';
-  }
+  // docs-site 单独部署，挂在根路径
+  if (process.env.VERCEL) return '/';
 
   // 3. 本地开发或通过 pnpm run deploy 部署到 GitHub Pages
   return '/apprise_vercel';

@@ -1,10 +1,9 @@
 {
-  "buildCommand": "cd docs-site && npm install && IS_COMBINED_SITE=true npm run build && cd .. && rm -rf dist && mkdir -p dist/docs && cp -r docs-site/build/* dist/docs/ && cp -r public/* dist/",
+  "buildCommand": "cd docs-site && npm install && IS_COMBINED_SITE=true npm run build && cd .. && mkdir -p dist/docs && cp -r docs-site/build/* dist/docs/ && cp -r public/* dist/",
   "outputDirectory": "dist",
   "rewrites": [
-    { "source": "/notify", "destination": "/api/index" },
-    { "source": "/docs/api", "destination": "/api/index" },
-    { "source": "/apispec_1.json", "destination": "/api/index" },
-    { "source": "/api/docs", "destination": "/api/index" }
+    { "source": "/notify",      "destination": "/api/index" },
+    { "source": "/docs/api",    "destination": "/api/index" },
+    { "source": "/openapi.json","destination": "/api/index" }
   ]
 }
