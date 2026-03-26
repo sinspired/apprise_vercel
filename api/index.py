@@ -299,7 +299,7 @@ def notify_status():
     return jsonify(
         {
             "message": "Apprise Vercel Notify is running",
-            "usage": "POST /notify  →  JSON { urls, body, title?, type?, format?, icon? }",
+            "usage": "POST /notify - JSON { urls, body, title?, type?, format?, icon? }",
             "docs": "/open-api",
             "apprise_version": apprise.__version__,
         }
