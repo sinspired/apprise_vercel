@@ -608,4 +608,26 @@ const app = {
     }
 };
 
-document.addEventListener('DOMContentLoaded', () => app.init());
+document.addEventListener('DOMContentLoaded', () => {
+    app.init();
+
+    fetch("/notify")
+        .then(res => res.json())
+        .then(data => {
+            const versionEl = document.getElementById("appriseVersion");
+            if (versionEl) {
+                if (data && data.apprise_version) {
+                    versionEl.textContent = "Apprise v" + data.apprise_version;
+                } else {
+                    versionEl.textContent = "Apprise vunknown";
+                }
+            }
+        })
+        .catch(err => {
+            console.error("Failed to fetch Apprise version:", err);
+            const versionEl = document.getElementById("appriseVersion");
+            if (versionEl) {
+                versionEl.textContent = "Apprise vunknown";
+            }
+        });
+});

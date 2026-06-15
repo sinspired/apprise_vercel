@@ -232,14 +232,18 @@
         <div class="panel-right">
             <div class="panel-header">
                 <span data-i18n="header_response">响应结果 Response</span>
-                <a href="/open-api" class="btn-text-secondary" data-i18n-title="nav_api" title="API 文档">
-                    <svg id="api-button" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" width="20"
-                        height="20">
-                        <path fill="currentColor"
-                            d="M469.333333 512l-301.696 301.696-60.330666-60.330667L348.672 512 107.306667 270.634667 167.637333 210.346667 469.290667 512z m0 298.666667h426.666667v85.333333H469.333333v-85.333333z">
-                        </path>
-                    </svg>
-                </a>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span id="appriseVersion"
+                        style="font-size: 13px; color: var(--text-secondary, #888); opacity: 0.8;"></span>
+                    <a href="/open-api" class="btn-text-secondary" data-i18n-title="nav_api" title="API 文档">
+                        <svg id="api-button" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"
+                            width="20" height="20">
+                            <path fill="currentColor"
+                                d="M469.333333 512l-301.696 301.696-60.330666-60.330667L348.672 512 107.306667 270.634667 167.637333 210.346667 469.290667 512z m0 298.666667h426.666667v85.333333H469.333333v-85.333333z">
+                            </path>
+                        </svg>
+                    </a>
+                </div>
             </div>
             <div id="resultArea">Waiting...</div>
 
