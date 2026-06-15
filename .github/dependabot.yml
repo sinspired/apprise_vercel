@@ -4,7 +4,7 @@ updates:
     directory: "/api"
     schedule:
       interval: "daily" # 每天检查一次更新，也可以改为 "weekly" (每周)
-      time: "00:00"
+      time: "10:28"
       timezone: "Asia/Shanghai"
 
     # 分组策略：低风险 patch/minor 合一个 PR，major 单独一个 PR
