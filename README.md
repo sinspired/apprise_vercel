@@ -4,7 +4,7 @@
 
 **无服务器极简通知服务**  
 </br>
-![Apprise](https://img.shields.io/badge/Apprise-1.9.6-00A98F)
+![Apprise Version](https://img.shields.io/github/v/release/caronc/apprise?logo=python&label=apprise&color=00A98F)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE)
 ![Python](https://img.shields.io/badge/Python-3.x-3776AB?logo=python&logoColor=white)
 
