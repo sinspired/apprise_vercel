@@ -36,10 +36,16 @@
 
 - Telegram: `tgram://BOT_TOKEN/CHAT_ID`
 - Discord: `discord://WEBHOOK_ID/WEBHOOK_TOKEN`
-- 钉钉 (DingTalk): `dingtalk://TOKEN`
+- 钉钉 (DingTalk): `dingtalk://{ApiKey}/{ToPhoneNo}`，`dingtalk://{Secret}@{ApiKey}/{ToPhoneNo}`
 - 邮件 (Email): `mailto://user:pass@smtp.example.com:587`
-- Bark (iOS): `bark://DEVICE_KEY`
-- 企业微信 (WeCom): `wecombot://{botkey}`
+- Bark (iOS): `barks://{host}/{device_key}`
+  - 比如 `barks://api.day.app/{device_key}`
+- 飞书 (feishu): `feishu://{bot_token}`
+
+微信目前支持两种渠道
+- 企业微信群组机器人 (wecombot): `wecombot://{botkey}`
+- 微信（企业微信 应用）通知（wechat）：`wechat://{corpid}:{corpsecret}@{agentid}/@all`
+
 
 ### [⚡️1分钟搞定常用通知渠道](https://github.com/sinspired/apprise_vercel/wiki/QuicSet)
 

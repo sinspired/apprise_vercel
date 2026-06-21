@@ -1,7 +1,7 @@
-# WeCom (企业微信)
+# WeCom (企业微信) 群组机器人
 
 > [!TIP]
-> **企业微信** 支持通过应用消息接口向成员或群组发送通知。[ⓘ 查看详细教程](https://appriseit.com/services/wecombot)
+> **企业微信** 支持通过群组机器人或群组发送通知。[ⓘ 查看详细教程](https://appriseit.com/services/wecombot)
 
 ## 📦 URL 格式
 

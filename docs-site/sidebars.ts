@@ -49,7 +49,7 @@ const sidebars: SidebarsConfig = {
       collapsible: true,
       collapsed: true,
       items: [
-        'Telegram', 'DingTalk', 'WeCom',
+        'Telegram', 'DingTalk', 'WeComAPI', 'WeComBot',
         'Discord', 'Feishu', 'Slack',
         'Line', 'Whatsapp', 'X',
       ],

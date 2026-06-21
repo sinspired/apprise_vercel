@@ -5,8 +5,8 @@
 
 ## 📦 URL 格式
 
-`dingtalk://{access_token}`
 `dingtalk://{ApiKey}/{ToPhoneNo}`
+`dingtalk://{Secret}@{ApiKey}/{ToPhoneNo}`
 
 ## ⚡️ 快速步骤
 
