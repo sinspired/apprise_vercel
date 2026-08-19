@@ -31,6 +31,10 @@ Apprise Vercel 是一个**无服务器极简通知服务**，它的主要设计�
 - [企业微信(应用API)](WeComAPI)
 - [邮件 (Email)](Email)
 
+## 🌍 域名相关
+
+[![域名注册](https://img.shields.io/badge/DigitalPlat-注册免费域名-2563eb?style=flat-square&logo=databricks&logoColor=ffffff)](https://dashboard.digitalplat.org/signup?ref=HZcosTVlmQ)
+
 ## 👥 讨论
 
 > Telegram 频道: [关注](https://t.me/sinspired_ai)  
