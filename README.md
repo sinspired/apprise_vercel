@@ -28,6 +28,16 @@
   <br>
 </div>
 
+## 🌍 域名相关
+
+> [!TIP] 
+> vercel 分配域名无法访问，需绑定可用域名，可自行注册或点击下方链接注册免费域名
+>
+> [![域名注册](https://img.shields.io/badge/DigitalPlat-注册免费域名-2563eb?style=flat-square&logo=databricks&logoColor=ffffff)](https://dashboard.digitalplat.org/signup?ref=HZcosTVlmQ)
+
+> [!CAUTION]
+> 请勿用于非法用途！
+> 
 ## 🔔 通知渠道
 
 支持 `100+` 通知渠道，完整列表请查阅 [Apprise 官方文档](https://appriseit.com/services)。
