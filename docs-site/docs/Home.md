@@ -1,9 +1,3 @@
----
-id: Home
-title: 首页
-slug: /
----
-
 # Apprise Vercel
 
 Apprise Vercel 是一个**无服务器极简通知服务**，它的主要设计目的是消除不同通知服务使用上的不一致。通过利用一个简单的 URL 字符串，你可以向 **Bark、Ntfy、Telegram、Email、钉钉、企业微信** 等 `100+` 目标发送通知。
