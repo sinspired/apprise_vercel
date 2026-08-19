@@ -37,7 +37,7 @@
 
 > [!CAUTION]
 > 请勿用于非法用途！
-> 
+
 ## 🔔 通知渠道
 
 支持 `100+` 通知渠道，完整列表请查阅 [Apprise 官方文档](https://appriseit.com/services)。
