@@ -32,7 +32,11 @@ const config: Config = {
   // onBrokenLinks: 'throw',
   // 即使有死链也允许编译通过（防止因路径调整导致部署中断）
   onBrokenLinks: 'warn',
-  onBrokenMarkdownLinks: 'warn',
+  markdown: {
+    hooks: {
+      onBrokenMarkdownLinks: 'warn',
+    },
+  },
 
   i18n: {
     defaultLocale: 'zh-Hans',
