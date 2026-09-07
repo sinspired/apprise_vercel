@@ -341,6 +341,9 @@ def notify_status():
 
 @app.post("/notify")
 def notify():
+    form = request.get_json(silent=True)
+    print("👉 收到的 URL:", form.get("urls"))
+
     """发送推送通知"""
     if not request.is_json:
         return jsonify({"error": "Content-Type must be application/json"}), 400
