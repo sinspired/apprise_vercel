@@ -1,2 +1,2 @@
-apprise==1.13.1
+apprise==2.0.0
 flask==3.1.3
