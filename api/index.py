@@ -2,6 +2,7 @@
 import os
 import tempfile
 import json
+import re
 from pathlib import Path
 from flask import Flask, request, jsonify, Response
 import apprise
