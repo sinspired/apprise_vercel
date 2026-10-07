@@ -340,6 +340,7 @@ def _build_apprise(url_list: list[str], icon_url: str) -> tuple[apprise.Apprise,
 
 # ─── Telegram Rich Message（方案 3）──────────────────────────────────────────
 
+
 def _is_telegram_url(raw_url: str) -> bool:
     _, actual = _split_tag_prefix(raw_url)
     scheme = actual.split("://", 1)[0].lower() if "://" in actual else ""
@@ -369,8 +370,20 @@ def _build_telegram_rich_blocks(
 
     # ---------- DOM ----------
     VOID = {
-        "area", "base", "br", "col", "embed", "hr", "img",
-        "input", "link", "meta", "param", "source", "track", "wbr",
+        "area",
+        "base",
+        "br",
+        "col",
+        "embed",
+        "hr",
+        "img",
+        "input",
+        "link",
+        "meta",
+        "param",
+        "source",
+        "track",
+        "wbr",
     }
 
     class Node:
@@ -485,78 +498,90 @@ def _build_telegram_rich_blocks(
                 if alt:
                     parts.append(alt)
             elif tag in ("b", "strong"):
-                parts.append({
-                    "type": "bold",
-                    "text": merge_rich(render_inline(node.children)),
-                })
+                parts.append(
+                    {
+                        "type": "bold",
+                        "text": merge_rich(render_inline(node.children)),
+                    }
+                )
             elif tag in ("i", "em"):
-                parts.append({
-                    "type": "italic",
-                    "text": merge_rich(render_inline(node.children)),
-                })
+                parts.append(
+                    {
+                        "type": "italic",
+                        "text": merge_rich(render_inline(node.children)),
+                    }
+                )
             elif tag in ("u", "ins"):
-                parts.append({
-                    "type": "underline",
-                    "text": merge_rich(render_inline(node.children)),
-                })
+                parts.append(
+                    {
+                        "type": "underline",
+                        "text": merge_rich(render_inline(node.children)),
+                    }
+                )
             elif tag in ("s", "strike", "del"):
-                parts.append({
-                    "type": "strikethrough",
-                    "text": merge_rich(render_inline(node.children)),
-                })
+                parts.append(
+                    {
+                        "type": "strikethrough",
+                        "text": merge_rich(render_inline(node.children)),
+                    }
+                )
             elif tag == "mark":
-                parts.append({
-                    "type": "marked",
-                    "text": merge_rich(render_inline(node.children)),
-                })
+                parts.append(
+                    {
+                        "type": "marked",
+                        "text": merge_rich(render_inline(node.children)),
+                    }
+                )
             elif tag == "code":
-                parts.append({
-                    "type": "code",
-                    "text": text_content(node, preserve=True),
-                })
+                parts.append(
+                    {
+                        "type": "code",
+                        "text": text_content(node, preserve=True),
+                    }
+                )
             elif tag == "a":
                 href = node.attrs.get("href", "")
                 img_nodes = [c for c in node.children if c.tag == "img"]
                 text_nodes = [
-                    c for c in node.children
-                    if c.tag is None and (c.text or "").strip()
+                    c for c in node.children if c.tag is None and (c.text or "").strip()
                 ]
-                other = [
-                    c for c in node.children
-                    if c.tag not in (None, "img", "br")
-                ]
-                is_image_link = (
-                    len(img_nodes) >= 1 and not text_nodes and not other
-                )
+                other = [c for c in node.children if c.tag not in (None, "img", "br")]
+                is_image_link = len(img_nodes) >= 1 and not text_nodes and not other
 
                 if is_image_link:
                     alt = get_img_alt(img_nodes[0])
                     display = alt or filename_from_url(href) or href
                     if href:
-                        parts.append({
-                            "type": "url",
-                            "text": display,
-                            "url": href,
-                        })
+                        parts.append(
+                            {
+                                "type": "url",
+                                "text": display,
+                                "url": href,
+                            }
+                        )
                     else:
                         parts.append(display)
                 else:
                     child = merge_rich(render_inline(node.children))
                     if href and child:
-                        parts.append({
-                            "type": "url",
-                            "text": child,
-                            "url": href,
-                        })
+                        parts.append(
+                            {
+                                "type": "url",
+                                "text": child,
+                                "url": href,
+                            }
+                        )
                     elif child:
                         parts.append(child)
                     elif href:
                         short = filename_from_url(href) or href
-                        parts.append({
-                            "type": "url",
-                            "text": short,
-                            "url": href,
-                        })
+                        parts.append(
+                            {
+                                "type": "url",
+                                "text": short,
+                                "url": href,
+                            }
+                        )
             else:
                 parts.append(render_inline(node.children))
         return parts
@@ -581,7 +606,8 @@ def _build_telegram_rich_blocks(
             item = {"blocks": blocks or [{"type": "paragraph", "text": ""}]}
             checkbox = next(
                 (
-                    c for c in li.children
+                    c
+                    for c in li.children
                     if c.tag == "input" and c.attrs.get("type") == "checkbox"
                 ),
                 None,
@@ -602,9 +628,7 @@ def _build_telegram_rich_blocks(
         for row in rows:
             cells = []
             for cell in [c for c in row.children if c.tag in ("th", "td")]:
-                cell_obj = {
-                    "text": merge_rich(render_inline(cell.children)) or ""
-                }
+                cell_obj = {"text": merge_rich(render_inline(cell.children)) or ""}
                 if cell.tag == "th":
                     cell_obj["is_header"] = True
                 for attr, key in (("rowspan", "rowspan"), ("colspan", "colspan")):
@@ -652,8 +676,14 @@ def _build_telegram_rich_blocks(
         tag = node.tag
 
         if tag in (
-            "__root__", "div", "section", "article", "main",
-            "thead", "tbody", "tfoot",
+            "__root__",
+            "div",
+            "section",
+            "article",
+            "main",
+            "thead",
+            "tbody",
+            "tfoot",
         ):
             for c in node.children:
                 result.extend(render_blocks(c))
@@ -667,11 +697,13 @@ def _build_telegram_rich_blocks(
             rich = merge_rich(render_inline(node.children))
             if not rich:
                 return []
-            return [{
-                "type": "heading",
-                "text": rich,
-                "size": int(tag[1]),
-            }]
+            return [
+                {
+                    "type": "heading",
+                    "text": rich,
+                    "size": int(tag[1]),
+                }
+            ]
 
         if tag == "pre":
             code = next(iter(descendants(node, "code")), None)
@@ -718,9 +750,21 @@ def _build_telegram_rich_blocks(
 
         rich = merge_rich(render_inline(node.children))
         child_has_block = any(
-            c.tag in (
-                "p", "h1", "h2", "h3", "h4", "h5", "h6",
-                "ul", "ol", "blockquote", "table", "pre", "hr",
+            c.tag
+            in (
+                "p",
+                "h1",
+                "h2",
+                "h3",
+                "h4",
+                "h5",
+                "h6",
+                "ul",
+                "ol",
+                "blockquote",
+                "table",
+                "pre",
+                "hr",
             )
             for c in node.children
         )
@@ -736,17 +780,22 @@ def _build_telegram_rich_blocks(
         # markdown → html
         try:
             import markdown
+
             # 任务列表预处理
             def convert_task_lists(text):
                 def repl(m):
                     indent, mark, content = m.group(1), m.group(2), m.group(3)
                     checked = " checked" if mark.lower() == "x" else ""
-                    return f'{indent}- <input type="checkbox"{checked} disabled> {content}'
+                    return (
+                        f'{indent}- <input type="checkbox"{checked} disabled> {content}'
+                    )
+
                 return re.sub(
                     r"(?m)^(\s*)[-*+]\s+\[([ xX])\]\s+(.*)$",
                     repl,
                     text,
                 )
+
             source = convert_task_lists(source)
             # commit 短 hash：去掉代码样式，保留可点击链接
             source = re.sub(
@@ -758,6 +807,7 @@ def _build_telegram_rich_blocks(
         except Exception:
             # 降级：简单换行
             from html import escape
+
             return escape(source).replace("\n", "<br>\n")
 
     html = to_html(body or "", body_format or "markdown")
@@ -768,11 +818,13 @@ def _build_telegram_rich_blocks(
 
     blocks = []
     if title and title.strip():
-        blocks.append({
-            "type": "heading",
-            "text": title.strip(),
-            "size": 2,
-        })
+        blocks.append(
+            {
+                "type": "heading",
+                "text": title.strip(),
+                "size": 2,
+            }
+        )
         blocks.append({"type": "divider"})
 
     blocks.extend(content_blocks)
@@ -813,11 +865,16 @@ def _build_telegram_rich_blocks(
                 break
         payload = {"blocks": blocks}
 
-    if payload_size(payload) > MAX_BYTES or count_blocks(payload["blocks"]) > MAX_BLOCKS:
-        payload["blocks"].append({
-            "type": "footer",
-            "text": "… Content truncated due to length limits.",
-        })
+    if (
+        payload_size(payload) > MAX_BYTES
+        or count_blocks(payload["blocks"]) > MAX_BLOCKS
+    ):
+        payload["blocks"].append(
+            {
+                "type": "footer",
+                "text": "… Content truncated due to length limits.",
+            }
+        )
 
     return payload
 
@@ -885,8 +942,54 @@ def notify():
     notify_type = form.get("type", "info")
     body_format = form.get("format", "text")
 
-    telegram_urls = [u for u in url_list if _is_telegram_url(u)]
+    # 1. 初始化渠道分类
+    telegram_urls_initial = [u for u in url_list if _is_telegram_url(u)]
     other_urls = [u for u in url_list if not _is_telegram_url(u)]
+
+    tg_use_rich = False
+    tg_rich_payload = None
+
+    # 2. 预判 Telegram 是否真的包含需要富文本（模板）的高级组件
+    if telegram_urls_initial:
+        try:
+            fmt_for_rich = (
+                body_format if body_format in ("html", "markdown") else "markdown"
+            )
+            # 提前生成 AST Block
+            tg_rich_payload = _build_telegram_rich_blocks(
+                body=body,
+                title=title,
+                body_format=fmt_for_rich,
+            )
+
+            # 遍历检查是否包含特定类型组件
+            def _needs_rich_text(blocks):
+                for b in blocks:
+                    if not isinstance(b, dict):
+                        continue
+                    # 如果只有普通段落、加粗链接，返回 False；遇到表格等必须用富文本返回 True
+                    if b.get("type") in ("table", "expandable_blockquote"):
+                        return True
+                    if "blocks" in b and _needs_rich_text(b["blocks"]):
+                        return True
+                    if "items" in b:
+                        for item in b.get("items", []):
+                            if "blocks" in item and _needs_rich_text(item["blocks"]):
+                                return True
+                return False
+
+            if _needs_rich_text(tg_rich_payload.get("blocks", [])):
+                tg_use_rich = True
+        except Exception as e:
+            print(f"Telegram rich text check error: {e}")
+
+    # 3. 分流：如果不包含表格等特性，直接降级，合并到 other_urls 以保留原始格式
+    telegram_urls = []
+    if telegram_urls_initial:
+        if tg_use_rich:
+            telegram_urls = telegram_urls_initial
+        else:
+            other_urls.extend(telegram_urls_initial)  # 降级：交给原生 Apprise 解析
 
     success_count = 0
     failed_count = 0
@@ -894,7 +997,7 @@ def notify():
     temp_files = []
 
     try:
-        # ── 其它渠道：完全恢复原始逻辑 ─────────────────────────────────────
+        # 其他渠道
         if other_urls:
             apobj, added = _build_apprise(other_urls, icon)
             if added == 0:
@@ -906,30 +1009,23 @@ def notify():
                         body=body,
                         title=title,
                         notify_type=notify_type,
-                        body_format=body_format,  # 用户选什么就传什么，不做转换
+                        body_format=body_format,  # 用户选什么就传什么，不做转换，原生渲染！
                     )
                     if result:
                         success_count += getattr(result, "success_count", added)
                         failed_count += getattr(result, "failed_count", 0)
                     else:
                         failed_count += added
-                        errors.append("Non-Telegram notification failed")
+                        errors.append("Notification failed")
                 except Exception as e:
                     failed_count += added
-                    errors.append(f"Non-Telegram error: {e}")
+                    errors.append(f"Notification error: {e}")
 
-        # ── 仅 Telegram：Rich Message ─────────────────────────────────────
-        if telegram_urls:
+        # 仅真正需要富文本的 Telegram 渠道
+        if telegram_urls and tg_rich_payload:
             try:
-                fmt_for_rich = (
-                    body_format if body_format in ("html", "markdown") else "markdown"
-                )
-                payload = _build_telegram_rich_blocks(
-                    body=body,
-                    title=title,
-                    body_format=fmt_for_rich,
-                )
-                template_path = _write_rich_template(payload)
+                # 刚才已经生成好 Payload 了，直接写入即可，不用二次解析
+                template_path = _write_rich_template(tg_rich_payload)
                 temp_files.append(template_path)
 
                 decorated = []
