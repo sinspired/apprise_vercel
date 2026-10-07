@@ -288,6 +288,9 @@ def decorate_url(raw_url: str, icon_url: str) -> str:
         scheme = parsed.scheme.lower()
         params = parse_qs(parsed.query)
 
+        if "format" in params:
+            del params["format"]
+
         def set_if_missing(key, value):
             if key not in params:
                 params[key] = [value]
@@ -343,37 +346,14 @@ def _build_apprise(url_list: list[str], icon_url: str) -> tuple[apprise.Apprise,
 
 # ─── 提取到全局的 Markdown 转 HTML 函数 ───────────────────────────────────────
 def _to_html(source: str, fmt: str) -> str:
-    import re
-
     if fmt == "html":
         return source
-    # markdown → html
     try:
         import markdown
 
-        # 任务列表预处理
-        def convert_task_lists(text):
-            def repl(m):
-                indent, mark, content = m.group(1), m.group(2), m.group(3)
-                checked = " checked" if mark.lower() == "x" else ""
-                return f'{indent}- <input type="checkbox"{checked} disabled> {content}'
-
-            return re.sub(
-                r"(?m)^(\s*)[-*+]\s+\[([ xX])\]\s+(.*)$",
-                repl,
-                text,
-            )
-
-        source = convert_task_lists(source)
-        # commit 短 hash：去掉代码样式，保留可点击链接
-        source = re.sub(
-            r"\(\[`([0-9a-f]{4,40})`\]\((https://[^)]+/commit/[^)]+)\)\)",
-            r"([\1](\2))",
-            source,
-        )
+        # 将 Markdown 转换为标准 HTML
         return markdown.markdown(source, extensions=["extra"])
     except Exception:
-        # 降级：简单换行
         from html import escape
 
         return escape(source).replace("\n", "<br>\n")
@@ -1043,12 +1023,11 @@ def notify():
                     tg_body = body
                     tg_format = body_format
 
-                    # 【核心转换枢纽】
-                    # 为了避开 Apprise 遇到报错后的 "纯文本去超链接" 降级
-                    # 如果用户传的是 Markdown，统一在此处安全转义为 HTML 喂给 Telegram
+                    # 真正的适配器逻辑：只有对于 Telegram，且原始请求是 Markdown 时
+                    # 我们把它翻译成 Telegram 兼容性极好的 HTML 模式
                     if not tg_use_rich and body_format == "markdown":
                         tg_body = _to_html(body, "markdown")
-                        tg_format = "html"
+                        tg_format = "html"  # 这次它终于能生效了！
                     elif tg_use_rich:
                         tg_body = body or " "
                         tg_format = "html"
