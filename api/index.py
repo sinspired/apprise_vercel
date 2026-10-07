@@ -341,6 +341,44 @@ def _build_apprise(url_list: list[str], icon_url: str) -> tuple[apprise.Apprise,
 # ─── Telegram Rich Message（方案 3）──────────────────────────────────────────
 
 
+# ─── 提取到全局的 Markdown 转 HTML 函数 ───────────────────────────────────────
+def _to_html(source: str, fmt: str) -> str:
+    import re
+
+    if fmt == "html":
+        return source
+    # markdown → html
+    try:
+        import markdown
+
+        # 任务列表预处理
+        def convert_task_lists(text):
+            def repl(m):
+                indent, mark, content = m.group(1), m.group(2), m.group(3)
+                checked = " checked" if mark.lower() == "x" else ""
+                return f'{indent}- <input type="checkbox"{checked} disabled> {content}'
+
+            return re.sub(
+                r"(?m)^(\s*)[-*+]\s+\[([ xX])\]\s+(.*)$",
+                repl,
+                text,
+            )
+
+        source = convert_task_lists(source)
+        # commit 短 hash：去掉代码样式，保留可点击链接
+        source = re.sub(
+            r"\(\[`([0-9a-f]{4,40})`\]\((https://[^)]+/commit/[^)]+)\)\)",
+            r"([\1](\2))",
+            source,
+        )
+        return markdown.markdown(source, extensions=["extra"])
+    except Exception:
+        # 降级：简单换行
+        from html import escape
+
+        return escape(source).replace("\n", "<br>\n")
+
+
 def _is_telegram_url(raw_url: str) -> bool:
     _, actual = _split_tag_prefix(raw_url)
     scheme = actual.split("://", 1)[0].lower() if "://" in actual else ""
@@ -774,43 +812,7 @@ def _build_telegram_rich_blocks(
             result.extend(render_blocks(c))
         return result
 
-    def to_html(source: str, fmt: str) -> str:
-        if fmt == "html":
-            return source
-        # markdown → html
-        try:
-            import markdown
-
-            # 任务列表预处理
-            def convert_task_lists(text):
-                def repl(m):
-                    indent, mark, content = m.group(1), m.group(2), m.group(3)
-                    checked = " checked" if mark.lower() == "x" else ""
-                    return (
-                        f'{indent}- <input type="checkbox"{checked} disabled> {content}'
-                    )
-
-                return re.sub(
-                    r"(?m)^(\s*)[-*+]\s+\[([ xX])\]\s+(.*)$",
-                    repl,
-                    text,
-                )
-
-            source = convert_task_lists(source)
-            # commit 短 hash：去掉代码样式，保留可点击链接
-            source = re.sub(
-                r"\(\[`([0-9a-f]{4,40})`\]\((https://[^)]+/commit/[^)]+)\)\)",
-                r"([\1](\2))",
-                source,
-            )
-            return markdown.markdown(source, extensions=["extra"])
-        except Exception:
-            # 降级：简单换行
-            from html import escape
-
-            return escape(source).replace("\n", "<br>\n")
-
-    html = to_html(body or "", body_format or "markdown")
+    html = _to_html(body or "", body_format or "markdown")
     parser = TreeParser()
     parser.feed(html)
     parser.close()
@@ -924,7 +926,6 @@ def notify_status():
 
 @app.post("/notify")
 def notify():
-    """发送推送通知"""
     if not request.is_json:
         return jsonify({"error": "Content-Type must be application/json"}), 400
 
@@ -942,32 +943,29 @@ def notify():
     notify_type = form.get("type", "info")
     body_format = form.get("format", "text")
 
-    # 1. 初始化渠道分类
+    # 1. 拆分目标渠道
     telegram_urls_initial = [u for u in url_list if _is_telegram_url(u)]
     other_urls = [u for u in url_list if not _is_telegram_url(u)]
 
     tg_use_rich = False
     tg_rich_payload = None
 
-    # 2. 预判 Telegram 是否真的包含需要富文本（模板）的高级组件
+    # 2. 预判 Telegram 是否需要启用 Rich Text（是否含表格、折叠块等高级组件）
     if telegram_urls_initial:
         try:
             fmt_for_rich = (
                 body_format if body_format in ("html", "markdown") else "markdown"
             )
-            # 提前生成 AST Block
             tg_rich_payload = _build_telegram_rich_blocks(
                 body=body,
                 title=title,
                 body_format=fmt_for_rich,
             )
 
-            # 遍历检查是否包含特定类型组件
             def _needs_rich_text(blocks):
                 for b in blocks:
                     if not isinstance(b, dict):
                         continue
-                    # 如果只有普通段落、加粗链接，返回 False；遇到表格等必须用富文本返回 True
                     if b.get("type") in ("table", "expandable_blockquote"):
                         return True
                     if "blocks" in b and _needs_rich_text(b["blocks"]):
@@ -983,62 +981,55 @@ def notify():
         except Exception as e:
             print(f"Telegram rich text check error: {e}")
 
-    # 3. 分流：如果不包含表格等特性，直接降级，合并到 other_urls 以保留原始格式
-    telegram_urls = []
-    if telegram_urls_initial:
-        if tg_use_rich:
-            telegram_urls = telegram_urls_initial
-        else:
-            other_urls.extend(telegram_urls_initial)  # 降级：交给原生 Apprise 解析
-
     success_count = 0
     failed_count = 0
     errors = []
     temp_files = []
 
     try:
-        # 其他渠道
+        # ── 其它渠道（Bark、Ntfy 等：保持绝对原生，客户端传什么就是什么） ───────────────
         if other_urls:
             apobj, added = _build_apprise(other_urls, icon)
-            if added == 0:
-                failed_count += len(other_urls)
-                errors.append("Failed to add any non-Telegram URLs")
-            else:
+            if added > 0:
                 try:
                     result = apobj.notify(
                         body=body,
                         title=title,
                         notify_type=notify_type,
-                        body_format=body_format,  # 用户选什么就传什么，不做转换，原生渲染！
+                        body_format=body_format,  # 尊重原生输入
                     )
                     if result:
                         success_count += getattr(result, "success_count", added)
                         failed_count += getattr(result, "failed_count", 0)
                     else:
                         failed_count += added
-                        errors.append("Notification failed")
+                        errors.append("Non-Telegram notification failed")
                 except Exception as e:
                     failed_count += added
-                    errors.append(f"Notification error: {e}")
+                    errors.append(f"Non-Telegram error: {e}")
 
-        # 仅真正需要富文本的 Telegram 渠道
-        if telegram_urls and tg_rich_payload:
+        # ── Telegram 渠道（拦截处理：绕过 Telegram 苛刻的 Markdown 限制） ───────────────
+        if telegram_urls_initial:
             try:
-                # 刚才已经生成好 Payload 了，直接写入即可，不用二次解析
-                template_path = _write_rich_template(tg_rich_payload)
-                temp_files.append(template_path)
-
-                decorated = []
-                for u in telegram_urls:
-                    u2 = decorate_url(u, icon)
-                    u2 = _append_url_param(u2, "template", template_path)
-                    decorated.append(u2)
-
                 apobj_tg = apprise.Apprise(asset=apprise.AppriseAsset())
                 try:
                     apobj_tg.asset.image_url_logo = icon
                 except Exception:
                     pass
+
+                decorated = []
+                # 情况 A：含表格 -> 挂载富文本模板，作为 HTML 发送
+                if tg_use_rich and tg_rich_payload:
+                    template_path = _write_rich_template(tg_rich_payload)
+                    temp_files.append(template_path)
+                    for u in telegram_urls_initial:
+                        u2 = decorate_url(u, icon)
+                        u2 = _append_url_param(u2, "template", template_path)
+                        decorated.append(u2)
+                # 情况 B：普通文本降级 -> 不带模板，后续转换格式发送
+                else:
+                    for u in telegram_urls_initial:
+                        decorated.append(decorate_url(u, icon))
 
                 added_tg = 0
                 for u in decorated:
@@ -1048,26 +1039,38 @@ def notify():
                     except Exception as e:
                         print(f"Failed to add Telegram URL: {e}")
 
-                if added_tg == 0:
-                    failed_count += len(telegram_urls)
-                    errors.append("Failed to add any Telegram URLs")
-                else:
+                if added_tg > 0:
+                    tg_body = body
+                    tg_format = body_format
+
+                    # 【核心转换枢纽】
+                    # 为了避开 Apprise 遇到报错后的 "纯文本去超链接" 降级
+                    # 如果用户传的是 Markdown，统一在此处安全转义为 HTML 喂给 Telegram
+                    if not tg_use_rich and body_format == "markdown":
+                        tg_body = _to_html(body, "markdown")
+                        tg_format = "html"
+                    elif tg_use_rich:
+                        tg_body = body or " "
+                        tg_format = "html"
+
                     result_tg = apobj_tg.notify(
-                        body=body or " ",
+                        body=tg_body,
                         title=title or " ",
                         notify_type=notify_type,
-                        body_format="html",
+                        body_format=tg_format,
                     )
                     if result_tg:
                         success_count += getattr(result_tg, "success_count", added_tg)
                         failed_count += getattr(result_tg, "failed_count", 0)
                     else:
                         failed_count += added_tg
-                        errors.append("Telegram Rich Message failed")
+                        errors.append("Telegram Notification failed")
+                else:
+                    failed_count += len(telegram_urls_initial)
+                    errors.append("Failed to add any Telegram URLs")
             except Exception as e:
-                failed_count += len(telegram_urls)
-                errors.append(f"Telegram Rich Message error: {e}")
-                print(f"Telegram rich error: {e}")
+                failed_count += len(telegram_urls_initial)
+                errors.append(f"Telegram error: {e}")
 
     finally:
         for p in temp_files:
