@@ -6,6 +6,7 @@ import re
 from pathlib import Path
 from flask import Flask, request, jsonify, Response
 import apprise
+from apprise import AppriseResultStatus
 from urllib.parse import urlparse, parse_qs, urlencode, urlunparse
 
 DEFAULT_ICON = "https://apprise.linkpc.dpdns.org/static/icons/icon-512.png"
@@ -323,22 +324,64 @@ def decorate_url(raw_url: str, icon_url: str) -> str:
         return raw_url  # 原样返回，含前缀
 
 
-def _build_apprise(url_list: list[str], icon_url: str) -> tuple[apprise.Apprise, int]:
-    """构建 Apprise 实例，注入图标并添加所有目标 URL，返回 (实例, 成功添加数)"""
+def _build_apprise(
+    url_list: list[str], icon_url: str
+) -> tuple[apprise.Apprise, int, list[str]]:
+    """构建 Apprise 实例，注入图标并添加所有目标 URL，返回 (实例, 成功添加数, 失败原因)"""
     asset = apprise.AppriseAsset()
     asset.image_url_logo = icon_url
     apobj = apprise.Apprise(asset=asset)
 
     added = 0
+    add_errors = []
     for u in url_list:
+        scheme = u.split("://", 1)[0] if "://" in u else "unknown"
         try:
             # Apprise v2 遇到无效配置可能会直接抛出异常而不是静默忽略
             if apobj.add(decorate_url(u, icon_url)):
                 added += 1
+            else:
+                add_errors.append(f"Invalid Apprise URL ({scheme})")
         except Exception as e:
-            print(f"Failed to add Apprise URL '{u}': {e}")
+            add_errors.append(f"Failed to add URL ({scheme}): {e}")
 
-    return apobj, added
+    return apobj, added, add_errors
+
+
+def _consume_apprise_result(
+    result, expected_count: int, label: str
+) -> tuple[int, int, list[str]]:
+    """统一解析 Apprise v2.x 的 AppriseResult，避免 PARTIAL / NOMATCH 误判"""
+    if result is None:
+        return 0, expected_count, [f"{label} returned empty result"]
+
+    status = getattr(result, "status", None)
+    if status == AppriseResultStatus.NOMATCH:
+        return (
+            0,
+            expected_count,
+            [
+                f"{label} matched no services (URL may contain tag prefix without 'tag' param)"
+            ],
+        )
+
+    sc = getattr(result, "success_count", None)
+    fc = getattr(result, "failed_count", None)
+    if sc is not None and fc is not None:
+        errs = []
+        if fc > 0:
+            status_name = getattr(status, "name", str(status))
+            errs.append(f"{label} {fc} target(s) failed (status={status_name})")
+        contacted = len(result)
+        if contacted < expected_count:
+            skipped = expected_count - contacted
+            fc += skipped
+            errs.append(f"{label} {skipped} target(s) skipped (check URL tags)")
+        return sc, fc, errs
+
+    if result:
+        return expected_count, 0, []
+    return 0, expected_count, [f"{label} notification failed"]
 
 
 # ─── Telegram Rich Message（方案 3）──────────────────────────────────────────
@@ -930,16 +973,13 @@ def notify():
     tg_use_rich = False
     tg_rich_payload = None
 
-    # 2. 预判 Telegram 是否需要启用 Rich Text（是否含表格、折叠块等高级组件）
-    if telegram_urls_initial:
+    # 2. 仅在 html/markdown 模式下预判 Telegram 是否需要 Rich Text（text 模式保持纯文本原样透传）
+    if telegram_urls_initial and body_format in ("html", "markdown"):
         try:
-            fmt_for_rich = (
-                body_format if body_format in ("html", "markdown") else "markdown"
-            )
             tg_rich_payload = _build_telegram_rich_blocks(
                 body=body,
                 title=title,
-                body_format=fmt_for_rich,
+                body_format=body_format,
             )
 
             def _needs_rich_text(blocks):
@@ -967,23 +1007,26 @@ def notify():
     temp_files = []
 
     try:
-        # ── 其它渠道（Bark、Ntfy 等：保持绝对原生，客户端传什么就是什么） ───────────────
+        # ── 其它渠道（Bark、Ntfy 等） ─────────────────────────────────────────────
         if other_urls:
-            apobj, added = _build_apprise(other_urls, icon)
+            apobj, added, add_errors = _build_apprise(other_urls, icon)
+            if add_errors:
+                failed_count += len(add_errors)
+                errors.extend(add_errors)
             if added > 0:
                 try:
                     result = apobj.notify(
                         body=body,
                         title=title,
                         notify_type=notify_type,
-                        body_format=body_format,  # 尊重原生输入
+                        body_format=body_format,
                     )
-                    if result:
-                        success_count += getattr(result, "success_count", added)
-                        failed_count += getattr(result, "failed_count", 0)
-                    else:
-                        failed_count += added
-                        errors.append("Non-Telegram notification failed")
+                    sc, fc, errs = _consume_apprise_result(
+                        result, len(apobj) or added, "Non-Telegram"
+                    )
+                    success_count += sc
+                    failed_count += fc
+                    errors.extend(errs)
                 except Exception as e:
                     failed_count += added
                     errors.append(f"Non-Telegram error: {e}")
@@ -1012,12 +1055,19 @@ def notify():
                         decorated.append(decorate_url(u, icon))
 
                 added_tg = 0
+                add_tg_errors = []
                 for u in decorated:
                     try:
                         if apobj_tg.add(u):
                             added_tg += 1
+                        else:
+                            add_tg_errors.append("Invalid Telegram URL")
                     except Exception as e:
-                        print(f"Failed to add Telegram URL: {e}")
+                        add_tg_errors.append(f"Failed to add Telegram URL: {e}")
+
+                if add_tg_errors:
+                    failed_count += len(add_tg_errors)
+                    errors.extend(add_tg_errors)
 
                 if added_tg > 0:
                     tg_body = body
@@ -1027,7 +1077,7 @@ def notify():
                     # 我们把它翻译成 Telegram 兼容性极好的 HTML 模式
                     if not tg_use_rich and body_format == "markdown":
                         tg_body = _to_html(body, "markdown")
-                        tg_format = "html"  # 这次它终于能生效了！
+                        tg_format = "html"
                     elif tg_use_rich:
                         tg_body = body or " "
                         tg_format = "html"
@@ -1038,15 +1088,12 @@ def notify():
                         notify_type=notify_type,
                         body_format=tg_format,
                     )
-                    if result_tg:
-                        success_count += getattr(result_tg, "success_count", added_tg)
-                        failed_count += getattr(result_tg, "failed_count", 0)
-                    else:
-                        failed_count += added_tg
-                        errors.append("Telegram Notification failed")
-                else:
-                    failed_count += len(telegram_urls_initial)
-                    errors.append("Failed to add any Telegram URLs")
+                    sc, fc, errs = _consume_apprise_result(
+                        result_tg, len(apobj_tg) or added_tg, "Telegram"
+                    )
+                    success_count += sc
+                    failed_count += fc
+                    errors.extend(errs)
             except Exception as e:
                 failed_count += len(telegram_urls_initial)
                 errors.append(f"Telegram error: {e}")
@@ -1057,6 +1104,9 @@ def notify():
                 os.unlink(p)
             except OSError:
                 pass
+
+    if success_count == 0 and failed_count == 0:
+        return jsonify({"error": "No notification targets were executed"}), 400
 
     if success_count == 0 and failed_count > 0:
         return (
